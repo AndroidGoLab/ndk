@@ -25,11 +25,7 @@ func ANativeWindow_acquire(window *ANativeWindow) {
 }
 
 func ANativeWindow_clearFrameRate(window *ANativeWindow) int32 {
-	cwindow, cwindowAllocMap := (*C.ANativeWindow)(unsafe.Pointer(window)), cgoAllocsUnknown
-	__ret := C.ANativeWindow_clearFrameRate(cwindow)
-	runtime.KeepAlive(cwindowAllocMap)
-	__v := (int32)(__ret)
-	return __v
+	return ANativeWindow_setFrameRateWithChangeStrategy(window, 0, ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT, ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS)
 }
 
 func ANativeWindow_getBuffersDataSpace(window *ANativeWindow) int32 {

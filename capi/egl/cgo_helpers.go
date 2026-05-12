@@ -41,11 +41,18 @@ func (a *CgoAllocMap) IsEmpty() bool {
 }
 
 func (a *CgoAllocMap) Borrow(b *CgoAllocMap) {
-	if b == nil || b.IsEmpty() {
+	if b == nil || a == b || b.IsEmpty() {
 		return
 	}
-	b.mux.Lock()
-	a.mux.Lock()
+	// Acquire locks in consistent pointer-address order to prevent
+	// ABBA deadlock when two goroutines call x.Borrow(y) and y.Borrow(x).
+	if uintptr(unsafe.Pointer(a)) < uintptr(unsafe.Pointer(b)) {
+		a.mux.Lock()
+		b.mux.Lock()
+	} else {
+		b.mux.Lock()
+		a.mux.Lock()
+	}
 	for ptr := range b.m {
 		if a.m == nil {
 			a.m = make(map[unsafe.Pointer]struct{})

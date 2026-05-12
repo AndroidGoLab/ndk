@@ -5,3 +5,11 @@ GENERATOR:
   Includes: ["android/native_window.h"]
   FlagGroups:
     - {name: LDFLAGS, flags: [-landroid, -lnativewindow]}
+  FunctionAliases:
+    - name: ANativeWindow_clearFrameRate
+      target: ANativeWindow_setFrameRateWithChangeStrategy
+      args:
+        - param: window
+        - literal: "0"
+        - literal: "ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT"
+        - literal: "ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS"

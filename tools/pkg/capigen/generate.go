@@ -77,11 +77,12 @@ func exportGoTypeRenamed(goType string, typeRenameMap map[string]string) string 
 // Manifest holds the relevant manifest fields for capi package generation.
 type Manifest struct {
 	Generator struct {
-		PackageName        string      `yaml:"PackageName"`
-		PackageDescription string      `yaml:"PackageDescription"`
-		Includes           []string    `yaml:"Includes"`
-		FlagGroups         []FlagGroup `yaml:"FlagGroups"`
-		ExcludeFunctions   []string    `yaml:"ExcludeFunctions"`
+		PackageName        string          `yaml:"PackageName"`
+		PackageDescription string          `yaml:"PackageDescription"`
+		Includes           []string        `yaml:"Includes"`
+		FlagGroups         []FlagGroup     `yaml:"FlagGroups"`
+		ExcludeFunctions   []string        `yaml:"ExcludeFunctions"`
+		FunctionAliases    []FunctionAlias `yaml:"FunctionAliases"`
 	} `yaml:"GENERATOR"`
 }
 
@@ -89,6 +90,21 @@ type Manifest struct {
 type FlagGroup struct {
 	Name  string   `yaml:"name"`
 	Flags []string `yaml:"flags"`
+}
+
+// FunctionAlias redirects one generated Go wrapper through another generated
+// wrapper instead of emitting a direct C symbol call.
+type FunctionAlias struct {
+	Name   string             `yaml:"name"`
+	Target string             `yaml:"target"`
+	Args   []FunctionAliasArg `yaml:"args"`
+}
+
+// FunctionAliasArg is either a source-parameter reference or a literal Go
+// expression passed to the target wrapper.
+type FunctionAliasArg struct {
+	Param   string `yaml:"param,omitempty"`
+	Literal string `yaml:"literal,omitempty"`
 }
 
 // BaseAPILevel is the default Android API level. Functions at or below this
@@ -153,6 +169,11 @@ func GeneratePackage(
 		levels = apiLevels[0]
 	}
 
+	functionAliases, err := buildFunctionAliasMap(spec, manifest, levels)
+	if err != nil {
+		return fmt.Errorf("building function aliases: %w", err)
+	}
+
 	// Split functions into base (no tag) and per-API-level groups.
 	baseFunctions := make(map[string]specmodel.FuncDef)
 	higherFunctions := make(map[int]map[string]specmodel.FuncDef) // api level -> functions
@@ -179,7 +200,7 @@ func GeneratePackage(
 	files["cgo_helpers.go"] = generateCgoHelpersGo(pkgName, preamble, spec, callbackSet)
 	files["cgo_helpers.h"] = generateCgoHelpersH(pkgName, manifest, spec, structPrefixSet)
 	files["cgo_helpers.c"] = generateCgoHelpersC(pkgName, spec, structPrefixSet)
-	files[pkgName+".go"] = generateFunctionsGo(pkgName, preamble, &baseSpec, callbackSet, structPrefixSet, typeRenameMap)
+	files[pkgName+".go"] = generateFunctionsGo(pkgName, preamble, &baseSpec, callbackSet, structPrefixSet, typeRenameMap, functionAliases)
 
 	// Generate per-API-level function files with build tags.
 	apiLevelKeys := sortedIntKeys(higherFunctions)
@@ -190,7 +211,7 @@ func GeneratePackage(
 		fileName := fmt.Sprintf("%s_api%d.go", pkgName, level)
 		levelPreamble := buildAPILevelPreamble(manifest, level)
 		buildTag := fmt.Sprintf("//go:build android_ndk%d\n\n", level)
-		files[fileName] = buildTag + generateFunctionsGo(pkgName, levelPreamble, &levelSpec, callbackSet, structPrefixSet, typeRenameMap)
+		files[fileName] = buildTag + generateFunctionsGo(pkgName, levelPreamble, &levelSpec, callbackSet, structPrefixSet, typeRenameMap, functionAliases)
 	}
 
 	for name, content := range files {
@@ -211,6 +232,62 @@ func GeneratePackage(
 	}
 
 	return nil
+}
+
+func buildFunctionAliasMap(
+	spec *specmodel.Spec,
+	manifest *Manifest,
+	apiLevels map[string]int,
+) (map[string]FunctionAlias, error) {
+	if len(manifest.Generator.FunctionAliases) == 0 {
+		return nil, nil
+	}
+
+	aliases := make(map[string]FunctionAlias, len(manifest.Generator.FunctionAliases))
+	for _, alias := range manifest.Generator.FunctionAliases {
+		source, ok := spec.Functions[alias.Name]
+		if !ok {
+			return nil, fmt.Errorf("source %q is not in spec functions", alias.Name)
+		}
+		target, ok := spec.Functions[alias.Target]
+		if !ok {
+			return nil, fmt.Errorf("target %q for source %q is not in spec functions", alias.Target, alias.Name)
+		}
+		if source.Returns != target.Returns {
+			return nil, fmt.Errorf("alias %q return type %q differs from target %q return type %q", alias.Name, source.Returns, alias.Target, target.Returns)
+		}
+		if len(alias.Args) != len(target.Params) {
+			return nil, fmt.Errorf("alias %q has %d args for target %q with %d params", alias.Name, len(alias.Args), alias.Target, len(target.Params))
+		}
+		if _, exists := aliases[alias.Name]; exists {
+			return nil, fmt.Errorf("duplicate alias for %q", alias.Name)
+		}
+		if apiLevels[alias.Target] > apiLevels[alias.Name] {
+			return nil, fmt.Errorf("alias %q cannot call higher API target %q", alias.Name, alias.Target)
+		}
+
+		sourceParams := make(map[string]struct{}, len(source.Params))
+		for _, param := range source.Params {
+			sourceParams[param.Name] = struct{}{}
+		}
+
+		for idx, arg := range alias.Args {
+			switch {
+			case arg.Param != "" && arg.Literal != "":
+				return nil, fmt.Errorf("alias %q arg %d has both param and literal", alias.Name, idx)
+			case arg.Param == "" && arg.Literal == "":
+				return nil, fmt.Errorf("alias %q arg %d has neither param nor literal", alias.Name, idx)
+			case arg.Param != "":
+				if _, ok := sourceParams[arg.Param]; !ok {
+					return nil, fmt.Errorf("alias %q arg %d references missing param %q", alias.Name, idx, arg.Param)
+				}
+			}
+		}
+
+		aliases[alias.Name] = alias
+	}
+
+	return aliases, nil
 }
 
 // buildCGoPreamble constructs the CGo comment block with LDFLAGS and includes.
@@ -838,6 +915,7 @@ func generateFunctionsGo(
 	callbackSet map[string]bool,
 	structPrefixSet map[string]bool,
 	typeRenameMap map[string]string,
+	functionAliases map[string]FunctionAlias,
 ) string {
 	var sb strings.Builder
 	sb.WriteString(generatedHeader)
@@ -854,7 +932,7 @@ func generateFunctionsGo(
 	funcNames := sortedKeys(spec.Functions)
 	for _, name := range funcNames {
 		fn := spec.Functions[name]
-		sb.WriteString(generateFunction(ExportName(name), fn, spec, callbackSet, structPrefixSet, typeRenameMap))
+		sb.WriteString(generateFunction(ExportName(name), name, fn, spec, callbackSet, structPrefixSet, typeRenameMap, functionAliases))
 	}
 
 	return sb.String()
@@ -863,12 +941,18 @@ func generateFunctionsGo(
 // generateFunction generates a single Go wrapper function.
 func generateFunction(
 	goFuncName string,
+	specFuncName string,
 	fn specmodel.FuncDef,
 	spec *specmodel.Spec,
 	callbackSet map[string]bool,
 	structPrefixSet map[string]bool,
 	typeRenameMap map[string]string,
+	functionAliases map[string]FunctionAlias,
 ) string {
+	if alias, ok := functionAliases[specFuncName]; ok {
+		return generateFunctionAlias(goFuncName, fn, typeRenameMap, alias)
+	}
+
 	var sb strings.Builder
 
 	goRetType := fn.Returns
@@ -929,6 +1013,56 @@ func generateFunction(
 	}
 
 	sb.WriteString("}\n\n")
+	return sb.String()
+}
+
+func generateFunctionAlias(
+	goFuncName string,
+	fn specmodel.FuncDef,
+	typeRenameMap map[string]string,
+	alias FunctionAlias,
+) string {
+	var sb strings.Builder
+
+	params := sanitizeParams(fn.Params)
+	paramNames := make(map[string]string, len(params))
+
+	fmt.Fprintf(&sb, "func %s(", goFuncName)
+	for i, p := range params {
+		if i > 0 {
+			sb.WriteString(", ")
+		}
+		paramType := exportGoTypeRenamed(p.Type, typeRenameMap)
+		if isFixedArrayType(paramType) {
+			paramType = "*" + paramType
+		}
+		fmt.Fprintf(&sb, "%s %s", p.Name, paramType)
+		paramNames[fn.Params[i].Name] = p.Name
+	}
+	sb.WriteString(")")
+	if fn.Returns != "" {
+		fmt.Fprintf(&sb, " %s", exportGoTypeRenamed(fn.Returns, typeRenameMap))
+	}
+	sb.WriteString(" {\n")
+
+	args := make([]string, 0, len(alias.Args))
+	for _, arg := range alias.Args {
+		switch {
+		case arg.Param != "":
+			args = append(args, paramNames[arg.Param])
+		default:
+			args = append(args, arg.Literal)
+		}
+	}
+
+	callExpr := fmt.Sprintf("%s(%s)", ExportName(alias.Target), strings.Join(args, ", "))
+	if fn.Returns != "" {
+		fmt.Fprintf(&sb, "\treturn %s\n", callExpr)
+	} else {
+		fmt.Fprintf(&sb, "\t%s\n", callExpr)
+	}
+	sb.WriteString("}\n\n")
+
 	return sb.String()
 }
 

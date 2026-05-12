@@ -83,6 +83,70 @@ func looperManifest() *Manifest {
 	return m
 }
 
+func nativeWindowFrameRateSpec() *specmodel.Spec {
+	return &specmodel.Spec{
+		Module:        "nativewindow",
+		SourcePackage: "github.com/AndroidGoLab/ndk/capi/nativewindow",
+		Types: map[string]specmodel.TypeDef{
+			"ANativeWindow": {
+				Kind:   "opaque_ptr",
+				CType:  "ANativeWindow",
+				GoType: "*C.ANativeWindow",
+			},
+		},
+		Enums: map[string][]specmodel.EnumValue{
+			"ANativeWindow_ChangeFrameRateStrategy": {
+				{Name: "ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS", Value: 0},
+			},
+			"ANativeWindow_FrameRateCompatibility": {
+				{Name: "ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT", Value: 0},
+			},
+		},
+		Functions: map[string]specmodel.FuncDef{
+			"ANativeWindow_clearFrameRate": {
+				CName: "ANativeWindow_clearFrameRate",
+				Params: []specmodel.Param{
+					{Name: "window", Type: "*ANativeWindow"},
+				},
+				Returns: "int32",
+			},
+			"ANativeWindow_setFrameRateWithChangeStrategy": {
+				CName: "ANativeWindow_setFrameRateWithChangeStrategy",
+				Params: []specmodel.Param{
+					{Name: "window", Type: "*ANativeWindow"},
+					{Name: "frameRate", Type: "float32"},
+					{Name: "compatibility", Type: "int8"},
+					{Name: "changeFrameRateStrategy", Type: "int8"},
+				},
+				Returns: "int32",
+			},
+		},
+	}
+}
+
+func nativeWindowManifest() *Manifest {
+	m := &Manifest{}
+	m.Generator.PackageName = "nativewindow"
+	m.Generator.PackageDescription = "Raw CGo bindings for Android native window"
+	m.Generator.Includes = []string{"android/native_window.h"}
+	m.Generator.FlagGroups = []FlagGroup{
+		{Name: "LDFLAGS", Flags: []string{"-landroid", "-lnativewindow"}},
+	}
+	m.Generator.FunctionAliases = []FunctionAlias{
+		{
+			Name:   "ANativeWindow_clearFrameRate",
+			Target: "ANativeWindow_setFrameRateWithChangeStrategy",
+			Args: []FunctionAliasArg{
+				{Param: "window"},
+				{Literal: "0"},
+				{Literal: "ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT"},
+				{Literal: "ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS"},
+			},
+		},
+	}
+	return m
+}
+
 func TestGeneratePackage(t *testing.T) {
 	spec := looperSpec()
 	manifest := looperManifest()
@@ -263,7 +327,7 @@ func TestGenerateFunctionsGo(t *testing.T) {
 	callbackSet := map[string]bool{"ALooper_callbackFunc": true}
 	preamble := buildCGoPreamble(looperManifest())
 
-	content := generateFunctionsGo("looper", preamble, spec, callbackSet, nil, nil)
+	content := generateFunctionsGo("looper", preamble, spec, callbackSet, nil, nil, nil)
 
 	// ALooper_forThread returns *ALooper.
 	assert.Contains(t, content, "func ALooper_forThread() *ALooper")
@@ -284,6 +348,40 @@ func TestGenerateFunctionsGo(t *testing.T) {
 
 	// ALooper_acquire has no return.
 	assert.Contains(t, content, "func ALooper_acquire(")
+}
+
+func TestGenerateFunctionAlias(t *testing.T) {
+	spec := nativeWindowFrameRateSpec()
+	manifest := nativeWindowManifest()
+
+	outDir := t.TempDir()
+	err := GeneratePackage(spec, manifest, outDir)
+	require.NoError(t, err)
+
+	basePath := filepath.Join(outDir, "nativewindow.go")
+	baseContent, err := os.ReadFile(basePath)
+	require.NoError(t, err)
+
+	content := string(baseContent)
+	assert.Contains(t, content, "func ANativeWindow_clearFrameRate(window *ANativeWindow) int32")
+	assert.Contains(t, content, "return ANativeWindow_setFrameRateWithChangeStrategy(window, 0, ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT, ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS)")
+	assert.NotContains(t, content, "C.ANativeWindow_clearFrameRate")
+}
+
+func TestGeneratedNativeWindowClearFrameRateUsesExportedSetter(t *testing.T) {
+	expectedReturn := "return ANativeWindow_setFrameRateWithChangeStrategy(window, 0, ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT, ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS)"
+	generatedFiles := []string{
+		filepath.Join("..", "..", "..", "capi", "nativewindow", "nativewindow.go"),
+		filepath.Join("..", "..", "..", "capi", "egl", "egl.go"),
+	}
+
+	for _, path := range generatedFiles {
+		content, err := os.ReadFile(path)
+		require.NoError(t, err)
+
+		assert.Contains(t, string(content), expectedReturn, path)
+		assert.NotContains(t, string(content), "C.ANativeWindow_clearFrameRate", path)
+	}
 }
 
 func TestCallbackHashSuffix(t *testing.T) {
