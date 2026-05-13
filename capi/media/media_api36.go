@@ -5,7 +5,7 @@
 package media
 
 /*
-#cgo LDFLAGS: -lmediandk -Wl,--allow-shlib-undefined
+#cgo LDFLAGS: -lmediandk
 #undef __ANDROID_MIN_SDK_VERSION__
 #define __ANDROID_MIN_SDK_VERSION__ 36
 #define __ANDROID_UNAVAILABLE_SYMBOLS_ARE_WEAK__ 1

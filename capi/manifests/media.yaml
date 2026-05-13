@@ -14,4 +14,4 @@ GENERATOR:
     - "media/NdkMediaDrm.h"
     - "media/NdkMediaCrypto.h"
   FlagGroups:
-    - {name: LDFLAGS, flags: ["-lmediandk", "-Wl,--allow-shlib-undefined"]}
+    - {name: LDFLAGS, flags: ["-lmediandk"]}

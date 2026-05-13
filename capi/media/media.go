@@ -3,7 +3,7 @@
 package media
 
 /*
-#cgo LDFLAGS: -lmediandk -Wl,--allow-shlib-undefined
+#cgo LDFLAGS: -lmediandk
 #include "media/NdkImage.h"
 #include "media/NdkImageReader.h"
 #include "media/NdkMediaCodec.h"
