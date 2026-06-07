@@ -60,11 +60,6 @@ func (h *Window) Acquire() {
 	capi.ANativeWindow_acquire(h.ptr)
 }
 
-// ClearFrameRate calls the underlying NDK function.
-func (h *Window) ClearFrameRate() error {
-	return result(capi.ANativeWindow_clearFrameRate(h.ptr))
-}
-
 // GetBuffersDataSpace calls the underlying NDK function.
 func (h *Window) GetBuffersDataSpace() error {
 	return result(capi.ANativeWindow_getBuffersDataSpace(h.ptr))

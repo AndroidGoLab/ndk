@@ -368,19 +368,21 @@ func TestGenerateFunctionAlias(t *testing.T) {
 	assert.NotContains(t, content, "C.ANativeWindow_clearFrameRate")
 }
 
-func TestGeneratedNativeWindowClearFrameRateUsesExportedSetter(t *testing.T) {
-	expectedReturn := "return ANativeWindow_setFrameRateWithChangeStrategy(window, 0, ANATIVEWINDOW_FRAME_RATE_COMPATIBILITY_DEFAULT, ANATIVEWINDOW_CHANGE_FRAME_RATE_ONLY_IF_SEAMLESS)"
+func TestGeneratedNativeWindowDoesNotExposeClearFrameRateAlias(t *testing.T) {
 	generatedFiles := []string{
 		filepath.Join("..", "..", "..", "capi", "nativewindow", "nativewindow.go"),
 		filepath.Join("..", "..", "..", "capi", "egl", "egl.go"),
+		filepath.Join("..", "..", "..", "window", "window.go"),
+		filepath.Join("..", "..", "..", "egl", "anative_window.go"),
 	}
 
 	for _, path := range generatedFiles {
 		content, err := os.ReadFile(path)
 		require.NoError(t, err)
 
-		assert.Contains(t, string(content), expectedReturn, path)
-		assert.NotContains(t, string(content), "C.ANativeWindow_clearFrameRate", path)
+		assert.NotContains(t, string(content), "ClearFrameRate", path)
+		assert.NotContains(t, string(content), "clearFrameRate", path)
+		assert.NotContains(t, string(content), "ANativeWindow_clearFrameRate", path)
 	}
 }
 

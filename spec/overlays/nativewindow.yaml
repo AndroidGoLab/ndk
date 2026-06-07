@@ -19,6 +19,9 @@ types:
     string_method: true
 
 functions:
+  ANativeWindow_clearFrameRate:
+    skip: true
+
   # Window lifecycle
   ANativeWindow_acquire:
     receiver: Window

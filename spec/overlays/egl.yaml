@@ -54,6 +54,9 @@ types:
     go_name: ANativeWindow
 
 functions:
+  ANativeWindow_clearFrameRate:
+    skip: true
+
   eglGetDisplay:
     go_name: GetDisplay
   eglInitialize:
