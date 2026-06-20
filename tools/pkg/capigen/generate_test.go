@@ -216,6 +216,40 @@ func TestGeneratePackageWithAPILevels(t *testing.T) {
 		"API-36 preamble must enable weak symbols")
 }
 
+func TestGeneratePackageWithAPI35Level(t *testing.T) {
+	spec := looperSpec()
+	spec.Functions["ALooper_android15Feature"] = specmodel.FuncDef{
+		CName: "ALooper_android15Feature",
+		Params: []specmodel.Param{
+			{Name: "looper", Type: "*ALooper"},
+		},
+		Returns: "int32",
+	}
+	manifest := looperManifest()
+	apiLevels := map[string]int{
+		"ALooper_android15Feature": 35,
+	}
+
+	outDir := t.TempDir()
+	err := GeneratePackage(spec, manifest, outDir, apiLevels)
+	require.NoError(t, err)
+
+	basePath := filepath.Join(outDir, "looper.go")
+	baseContent, err := os.ReadFile(basePath)
+	require.NoError(t, err)
+	assert.NotContains(t, string(baseContent), "ALooper_android15Feature",
+		"base file must not hard-reference Android 15 symbols when target runtime is Android 14")
+
+	api35Path := filepath.Join(outDir, "looper_api35.go")
+	api35Content, err := os.ReadFile(api35Path)
+	require.NoError(t, err)
+	api35Str := string(api35Content)
+	assert.Contains(t, api35Str, "//go:build android_ndk35",
+		"API-35 file must have build tag")
+	assert.Contains(t, api35Str, "ALooper_android15Feature",
+		"API-35 file must contain Android 15 function")
+}
+
 func TestGeneratePackageWithoutAPILevels(t *testing.T) {
 	spec := looperSpec()
 	manifest := looperManifest()

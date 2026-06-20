@@ -540,18 +540,6 @@ func ACameraMetadata_getConstEntry(metadata *ACameraMetadata, tag uint32, entry 
 	return __v
 }
 
-func ACameraMetadata_getTagFromName(metadata *ACameraMetadata, name string, tag *uint32) Camera_status_t {
-	cmetadata, cmetadataAllocMap := (*C.ACameraMetadata)(unsafe.Pointer(metadata)), cgoAllocsUnknown
-	cname, cnameAllocMap := UnpackPCharString(name)
-	ctag, ctagAllocMap := (*C.uint)(unsafe.Pointer(tag)), cgoAllocsUnknown
-	__ret := C.ACameraMetadata_getTagFromName(cmetadata, cname, ctag)
-	runtime.KeepAlive(ctagAllocMap)
-	runtime.KeepAlive(cnameAllocMap)
-	runtime.KeepAlive(cmetadataAllocMap)
-	__v := (Camera_status_t)(__ret)
-	return __v
-}
-
 func ACameraMetadata_isLogicalMultiCamera(staticMetadata *ACameraMetadata, numPhysicalCameras *uint64, physicalCameraIds **string) bool {
 	cstaticMetadata, cstaticMetadataAllocMap := (*C.ACameraMetadata)(unsafe.Pointer(staticMetadata)), cgoAllocsUnknown
 	cnumPhysicalCameras, cnumPhysicalCamerasAllocMap := (*C.uint64_t)(unsafe.Pointer(numPhysicalCameras)), cgoAllocsUnknown

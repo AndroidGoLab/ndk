@@ -107,10 +107,10 @@ type FunctionAliasArg struct {
 	Literal string `yaml:"literal,omitempty"`
 }
 
-// BaseAPILevel is the default Android API level. Functions at or below this
+// BaseAPILevel is the Android 14 compatibility floor. Functions at or below this
 // level go into the main generated file; functions above it are emitted into
 // separate build-tagged files.
-const BaseAPILevel = 35
+const BaseAPILevel = 34
 
 // GeneratePackage generates a complete capi/ Go package from the spec
 // and manifest. It writes doc.go, types.go, const.go, cgo_helpers.go,

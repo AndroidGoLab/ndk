@@ -234,3 +234,4 @@ api_levels:
   ACameraManager_unregisterExtendedAvailabilityCallback: 29
   ACameraMetadata_isLogicalMultiCamera: 29
   ACameraMetadata_getPhysicalCameraIds: 29
+  ACameraMetadata_getTagFromName: 35
