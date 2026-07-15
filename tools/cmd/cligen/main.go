@@ -130,6 +130,8 @@ func discoverPackages(root string) []string {
 
 func parsePackage(dir, dirName string) (*pkgInfo, error) {
 	fset := token.NewFileSet()
+	// Parse every target's source so the generated CLI exposes the complete NDK API.
+	//nolint:staticcheck // Build-aware package loading would omit cross-target declarations.
 	pkgs, err := parser.ParseDir(fset, dir, func(fi os.FileInfo) bool {
 		return !strings.HasSuffix(fi.Name(), "_test.go")
 	}, 0)

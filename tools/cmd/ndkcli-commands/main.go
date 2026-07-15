@@ -26,6 +26,8 @@ func main() {
 	}
 
 	fset := token.NewFileSet()
+	// Parse every target's source so the report covers the complete generated CLI.
+	//nolint:staticcheck // Build-aware package loading would omit cross-target commands.
 	pkgs, err := parser.ParseDir(fset, dir, func(fi os.FileInfo) bool {
 		return !strings.HasSuffix(fi.Name(), "_test.go")
 	}, 0)
