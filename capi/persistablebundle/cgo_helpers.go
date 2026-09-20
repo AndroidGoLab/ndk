@@ -96,10 +96,13 @@ func NewAPersistableBundle_stringAllocatorRef(ref unsafe.Pointer) *APersistableB
 }
 
 //export APersistableBundle_stringAllocatorD22E9A69
-func APersistableBundle_stringAllocatorD22E9A69() {
+func APersistableBundle_stringAllocatorD22E9A69(csizeBytes C.int32_t, ccontext unsafe.Pointer) *C.char {
 	if aPersistableBundle_stringAllocatorD22E9A69Func != nil {
-		aPersistableBundle_stringAllocatorD22E9A69Func()
-		return
+		sizeBytesd22e9a69 := (int32)(csizeBytes)
+		contextd22e9a69 := (unsafe.Pointer)(unsafe.Pointer(ccontext))
+		retd22e9a69 := aPersistableBundle_stringAllocatorD22E9A69Func(sizeBytesd22e9a69, contextd22e9a69)
+		ret, _ := (*C.char)(unsafe.Pointer(retd22e9a69)), cgoAllocsUnknown
+		return ret
 	}
 	panic("callback func has not been set (race?)")
 }

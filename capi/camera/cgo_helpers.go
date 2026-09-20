@@ -421,7 +421,7 @@ func NewACameraCaptureSession_logicalCamera_captureCallback_resultRef(ref unsafe
 }
 
 //export ACameraCaptureSession_logicalCamera_captureCallback_result1BCFF0F4
-func ACameraCaptureSession_logicalCamera_captureCallback_result1BCFF0F4(ccontext unsafe.Pointer, csession *C.ACameraCaptureSession, crequest *C.ACaptureRequest, cresult *C.ACameraMetadata, cphysicalResultCount C.uint64_t, cphysicalCameraIds **C.int8_t, cphysicalResults **C.ACameraMetadata) {
+func ACameraCaptureSession_logicalCamera_captureCallback_result1BCFF0F4(ccontext unsafe.Pointer, csession *C.ACameraCaptureSession, crequest *C.ACaptureRequest, cresult *C.ACameraMetadata, cphysicalResultCount C.size_t, cphysicalCameraIds **C.char, cphysicalResults **C.ACameraMetadata) {
 	if aCameraCaptureSession_logicalCamera_captureCallback_result1BCFF0F4Func != nil {
 		context1bcff0f4 := (unsafe.Pointer)(unsafe.Pointer(ccontext))
 		session1bcff0f4 := (*ACameraCaptureSession)(unsafe.Pointer(csession))

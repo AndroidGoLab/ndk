@@ -326,22 +326,28 @@ callbacks:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: release_fence_fd
               type: int32
+              c_type: int
         returns: ""
     ASurfaceTransaction_OnCommit:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: stats
               type: '*ASurfaceTransactionStats'
+              c_type: ASurfaceTransactionStats*
         returns: ""
     ASurfaceTransaction_OnComplete:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: stats
               type: '*ASurfaceTransactionStats'
+              c_type: ASurfaceTransactionStats*
         returns: ""
 structs:
     AColor_xy:

@@ -2,7 +2,6 @@
 
 #include "_cgo_export.h"
 
-void APersistableBundle_stringAllocator_d22e9a69() {
-	APersistableBundle_stringAllocatorD22E9A69();
+char* APersistableBundle_stringAllocator_d22e9a69(int32_t sizeBytes, void* context) {
+	return APersistableBundle_stringAllocatorD22E9A69(sizeBytes, context);
 }
-

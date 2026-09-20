@@ -195,9 +195,17 @@ func ANeuralNetworksDevice_getFeatureLevel(device *ANeuralNetworksDevice, featur
 	return __v
 }
 
-func ANeuralNetworksDevice_getName(device *ANeuralNetworksDevice, name *string) int32 {
+func ANeuralNetworksDevice_getName(device *ANeuralNetworksDevice, name **int8) int32 {
 	cdevice, cdeviceAllocMap := (*C.ANeuralNetworksDevice)(unsafe.Pointer(device)), cgoAllocsUnknown
-	__ret := C.ANeuralNetworksDevice_getName(cdevice, (**C.char)(unsafe.Pointer(name)))
+	cname, cnameAllocMap := (**C.char)(unsafe.Pointer(name)), cgoAllocsUnknown
+	var pinnercname runtime.Pinner
+	pinnercname.Pin(name)
+	if name != nil {
+		pinnercname.Pin(unsafe.Pointer(*name))
+	}
+	defer pinnercname.Unpin()
+	__ret := C.ANeuralNetworksDevice_getName(cdevice, cname)
+	runtime.KeepAlive(cnameAllocMap)
 	runtime.KeepAlive(cdeviceAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -213,9 +221,17 @@ func ANeuralNetworksDevice_getType(device *ANeuralNetworksDevice, _type *int32) 
 	return __v
 }
 
-func ANeuralNetworksDevice_getVersion(device *ANeuralNetworksDevice, version *string) int32 {
+func ANeuralNetworksDevice_getVersion(device *ANeuralNetworksDevice, version **int8) int32 {
 	cdevice, cdeviceAllocMap := (*C.ANeuralNetworksDevice)(unsafe.Pointer(device)), cgoAllocsUnknown
-	__ret := C.ANeuralNetworksDevice_getVersion(cdevice, (**C.char)(unsafe.Pointer(version)))
+	cversion, cversionAllocMap := (**C.char)(unsafe.Pointer(version)), cgoAllocsUnknown
+	var pinnercversion runtime.Pinner
+	pinnercversion.Pin(version)
+	if version != nil {
+		pinnercversion.Pin(unsafe.Pointer(*version))
+	}
+	defer pinnercversion.Unpin()
+	__ret := C.ANeuralNetworksDevice_getVersion(cdevice, cversion)
+	runtime.KeepAlive(cversionAllocMap)
 	runtime.KeepAlive(cdeviceAllocMap)
 	__v := (int32)(__ret)
 	return __v

@@ -10,19 +10,19 @@ void AImageReader_ImageCallback_32cdd235(void* context, AImageReader* reader) {
 	AImageReader_ImageCallback32CDD235(context, reader);
 }
 
-void AMediaCodecOnAsyncError_f1342a37(AMediaCodec* codec, void* userdata, media_status_t _error, int actionCode, char* detail) {
-	AMediaCodecOnAsyncErrorF1342A37(codec, userdata, _error, actionCode, detail);
+void AMediaCodecOnAsyncError_f1342a37(AMediaCodec* codec, void* userdata, media_status_t _error, int32_t actionCode, const char* detail) {
+	AMediaCodecOnAsyncErrorF1342A37(codec, userdata, _error, actionCode, (char*)detail);
 }
 
 void AMediaCodecOnAsyncFormatChanged_3dabd828(AMediaCodec* codec, void* userdata, AMediaFormat* format) {
 	AMediaCodecOnAsyncFormatChanged3DABD828(codec, userdata, format);
 }
 
-void AMediaCodecOnAsyncInputAvailable_2f5096c4(AMediaCodec* codec, void* userdata, int index) {
+void AMediaCodecOnAsyncInputAvailable_2f5096c4(AMediaCodec* codec, void* userdata, int32_t index) {
 	AMediaCodecOnAsyncInputAvailable2F5096C4(codec, userdata, index);
 }
 
-void AMediaCodecOnAsyncOutputAvailable_f41b4c39(AMediaCodec* codec, void* userdata, int index, AMediaCodecBufferInfo* bufferInfo) {
+void AMediaCodecOnAsyncOutputAvailable_f41b4c39(AMediaCodec* codec, void* userdata, int32_t index, AMediaCodecBufferInfo* bufferInfo) {
 	AMediaCodecOnAsyncOutputAvailableF41B4C39(codec, userdata, index, bufferInfo);
 }
 
@@ -42,19 +42,19 @@ int64_t AMediaDataSourceGetSize_e0220813(void* userdata) {
 	return AMediaDataSourceGetSizeE0220813(userdata);
 }
 
-int64_t AMediaDataSourceReadAt_865c1a4b(void* userdata, off64_t offset, void* buffer, uint64_t size) {
+int64_t AMediaDataSourceReadAt_865c1a4b(void* userdata, off64_t offset, void* buffer, size_t size) {
 	return AMediaDataSourceReadAt865C1A4B(userdata, offset, buffer, size);
 }
 
-void AMediaDrmEventListener_76bb5445(AMediaDrm* p0, AMediaDrmSessionId* sessionId, AMediaDrmEventType eventType, int extra, uint8_t* data, uint64_t dataSize) {
-	AMediaDrmEventListener76BB5445(p0, sessionId, eventType, extra, data, dataSize);
+void AMediaDrmEventListener_76bb5445(AMediaDrm* p0, const AMediaDrmSessionId* sessionId, AMediaDrmEventType eventType, int extra, const uint8_t* data, size_t dataSize) {
+	AMediaDrmEventListener76BB5445(p0, (AMediaDrmSessionId*)sessionId, eventType, extra, (uint8_t*)data, dataSize);
 }
 
-void AMediaDrmExpirationUpdateListener_ec3b27d6(AMediaDrm* p0, AMediaDrmSessionId* sessionId, int64_t expiryTimeInMS) {
-	AMediaDrmExpirationUpdateListenerEC3B27D6(p0, sessionId, expiryTimeInMS);
+void AMediaDrmExpirationUpdateListener_ec3b27d6(AMediaDrm* p0, const AMediaDrmSessionId* sessionId, int64_t expiryTimeInMS) {
+	AMediaDrmExpirationUpdateListenerEC3B27D6(p0, (AMediaDrmSessionId*)sessionId, expiryTimeInMS);
 }
 
-void AMediaDrmKeysChangeListener_fd05e34a(AMediaDrm* p0, AMediaDrmSessionId* sessionId, AMediaDrmKeyStatus* keyStatus, uint64_t numKeys, _Bool hasNewUsableKey) {
-	AMediaDrmKeysChangeListenerFD05E34A(p0, sessionId, keyStatus, numKeys, hasNewUsableKey);
+void AMediaDrmKeysChangeListener_fd05e34a(AMediaDrm* p0, const AMediaDrmSessionId* sessionId, const AMediaDrmKeyStatus* keyStatus, size_t numKeys, bool hasNewUsableKey) {
+	AMediaDrmKeysChangeListenerFD05E34A(p0, (AMediaDrmSessionId*)sessionId, (AMediaDrmKeyStatus*)keyStatus, numKeys, hasNewUsableKey);
 }
 

@@ -1,5 +1,8 @@
 export PATH := $(HOME)/go/bin:$(PATH)
 
+GODEBUG ?= cgocheck=1
+export GODEBUG
+
 ANDROID_HOME ?= $(HOME)/Android/Sdk
 NDK_PATH ?= $(or $(ANDROID_NDK_HOME),$(shell ls -d $(ANDROID_HOME)/ndk/* 2>/dev/null | sort -V | tail -1))
 
@@ -16,6 +19,7 @@ MODULES  := aaudio camera sensor gles2 gles3 egl vulkan media \
 FIXTURE_MODULES := $(notdir $(wildcard tools/pkg/specgen/testdata/*/))
 
 NDK_SYSROOT := $(NDK_PATH)/toolchains/llvm/prebuilt/linux-x86_64/sysroot/usr/include
+NDK_CGO_SYSROOT := $(NDK_PATH)/toolchains/llvm/prebuilt/linux-x86_64/sysroot
 C2FFI_BIN   ?= c2ffi
 
 API_LEVEL      ?= 35
@@ -122,12 +126,14 @@ lint:
 # Cross-compile all examples and ndkcli for Android arm64 to catch compile errors (requires NDK)
 check-examples:
 	CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC=$(NDK_CC_ARM64) \
+		CGO_CFLAGS="$(CGO_CFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_CPPFLAGS="$(CGO_CPPFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_LDFLAGS="$(CGO_LDFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" \
 		go build ./examples/... ./cmd/ndkcli/
 
 # Cross-compile E2E test binary for Android x86_64 (requires NDK)
 e2e-build:
 	@mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=1 GOOS=android GOARCH=amd64 CC=$(NDK_CC_X86_64) \
+		CGO_CFLAGS="$(CGO_CFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_CPPFLAGS="$(CGO_CPPFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_LDFLAGS="$(CGO_LDFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" \
 		go build -o $(BUILD_DIR)/e2e_test ./tests/e2e
 
 # Run full E2E test on Android emulator (requires SDK + NDK + KVM)
@@ -164,14 +170,17 @@ install-ndk:
 ndkcli:
 	@mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC=$(NDK_CC_ARM64) \
+		CGO_CFLAGS="$(CGO_CFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_CPPFLAGS="$(CGO_CPPFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_LDFLAGS="$(CGO_LDFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" \
 		go build -o $(BUILD_DIR)/ndkcli ./cmd/ndkcli/
 
 # Build release binaries for both architectures (stripped)
 ndkcli-release:
 	@mkdir -p $(BUILD_DIR)
 	CGO_ENABLED=1 GOOS=android GOARCH=arm64 CC=$(NDK_CC_ARM64) \
+		CGO_CFLAGS="$(CGO_CFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_CPPFLAGS="$(CGO_CPPFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_LDFLAGS="$(CGO_LDFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" \
 		go build -trimpath -ldflags="-s -w" -o $(BUILD_DIR)/ndkcli-android-arm64 ./cmd/ndkcli/
 	CGO_ENABLED=1 GOOS=android GOARCH=amd64 CC=$(NDK_CC_X86_64) \
+		CGO_CFLAGS="$(CGO_CFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_CPPFLAGS="$(CGO_CPPFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_LDFLAGS="$(CGO_LDFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" \
 		go build -trimpath -ldflags="-s -w" -o $(BUILD_DIR)/ndkcli-android-x86_64 ./cmd/ndkcli/
 
 # Print all ndkcli subcommands (extracted from source, no binary needed)
@@ -217,6 +226,7 @@ apk-displaycamera: $(APK_KEYSTORE)
 	@rm -rf $(BUILD)
 	@mkdir -p $(BUILD)/lib/$(APK_ABI)
 	CGO_ENABLED=1 GOOS=android GOARCH=$(APK_GOARCH) CC=$(APK_CC) \
+		CGO_CFLAGS="$(CGO_CFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_CPPFLAGS="$(CGO_CPPFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" CGO_LDFLAGS="$(CGO_LDFLAGS) --sysroot=$(NDK_CGO_SYSROOT)" \
 		go build -buildmode=c-shared \
 		-o $(BUILD)/lib/$(APK_ABI)/libdisplaycamera.so \
 		./$(DIR)

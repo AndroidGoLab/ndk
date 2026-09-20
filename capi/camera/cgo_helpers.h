@@ -18,7 +18,7 @@ void ACameraCaptureSession_captureCallback_bufferLost_f848f414(void* context, AC
 void ACameraCaptureSession_captureCallback_failed_7ffeb49b(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ACameraCaptureFailure* failure);
 
 // ACameraCaptureSession_captureCallback_result_314ecd33 is a proxy for callback ACameraCaptureSession_captureCallback_result.
-void ACameraCaptureSession_captureCallback_result_314ecd33(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ACameraMetadata* result);
+void ACameraCaptureSession_captureCallback_result_314ecd33(void* context, ACameraCaptureSession* session, ACaptureRequest* request, const ACameraMetadata* result);
 
 // ACameraCaptureSession_captureCallback_sequenceAbort_a6746d19 is a proxy for callback ACameraCaptureSession_captureCallback_sequenceAbort.
 void ACameraCaptureSession_captureCallback_sequenceAbort_a6746d19(void* context, ACameraCaptureSession* session, int sequenceId);
@@ -27,16 +27,16 @@ void ACameraCaptureSession_captureCallback_sequenceAbort_a6746d19(void* context,
 void ACameraCaptureSession_captureCallback_sequenceEnd_52945432(void* context, ACameraCaptureSession* session, int sequenceId, int64_t frameNumber);
 
 // ACameraCaptureSession_captureCallback_start_fd7e5afc is a proxy for callback ACameraCaptureSession_captureCallback_start.
-void ACameraCaptureSession_captureCallback_start_fd7e5afc(void* context, ACameraCaptureSession* session, ACaptureRequest* request, int64_t timestamp);
+void ACameraCaptureSession_captureCallback_start_fd7e5afc(void* context, ACameraCaptureSession* session, const ACaptureRequest* request, int64_t timestamp);
 
 // ACameraCaptureSession_captureCallback_startV2_26e0bf9d is a proxy for callback ACameraCaptureSession_captureCallback_startV2.
-void ACameraCaptureSession_captureCallback_startV2_26e0bf9d(void* context, ACameraCaptureSession* session, ACaptureRequest* request, int64_t timestamp, int64_t frameNumber);
+void ACameraCaptureSession_captureCallback_startV2_26e0bf9d(void* context, ACameraCaptureSession* session, const ACaptureRequest* request, int64_t timestamp, int64_t frameNumber);
 
 // ACameraCaptureSession_logicalCamera_captureCallback_failed_47ed36f2 is a proxy for callback ACameraCaptureSession_logicalCamera_captureCallback_failed.
 void ACameraCaptureSession_logicalCamera_captureCallback_failed_47ed36f2(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ALogicalCameraCaptureFailure* failure);
 
 // ACameraCaptureSession_logicalCamera_captureCallback_result_1bcff0f4 is a proxy for callback ACameraCaptureSession_logicalCamera_captureCallback_result.
-void ACameraCaptureSession_logicalCamera_captureCallback_result_1bcff0f4(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ACameraMetadata* result, uint64_t physicalResultCount, int8_t** physicalCameraIds, ACameraMetadata** physicalResults);
+void ACameraCaptureSession_logicalCamera_captureCallback_result_1bcff0f4(void* context, ACameraCaptureSession* session, ACaptureRequest* request, const ACameraMetadata* result, size_t physicalResultCount, const char** physicalCameraIds, const ACameraMetadata** physicalResults);
 
 // ACameraCaptureSession_prepareCallback_c0ef58e6 is a proxy for callback ACameraCaptureSession_prepareCallback.
 void ACameraCaptureSession_prepareCallback_c0ef58e6(void* context, ANativeWindow* window, ACameraCaptureSession* session);
@@ -54,8 +54,8 @@ void ACameraDevice_StateCallback_16aee050(void* context, ACameraDevice* device);
 void ACameraManager_AccessPrioritiesChangedCallback_e0732dc5(void* context);
 
 // ACameraManager_AvailabilityCallback_aab12960 is a proxy for callback ACameraManager_AvailabilityCallback.
-void ACameraManager_AvailabilityCallback_aab12960(void* context, char* cameraId);
+void ACameraManager_AvailabilityCallback_aab12960(void* context, const char* cameraId);
 
 // ACameraManager_PhysicalCameraAvailabilityCallback_c6d28c7e is a proxy for callback ACameraManager_PhysicalCameraAvailabilityCallback.
-void ACameraManager_PhysicalCameraAvailabilityCallback_c6d28c7e(void* context, char* cameraId, char* physicalCameraId);
+void ACameraManager_PhysicalCameraAvailabilityCallback_c6d28c7e(void* context, const char* cameraId, const char* physicalCameraId);
 

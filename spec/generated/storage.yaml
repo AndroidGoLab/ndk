@@ -84,10 +84,13 @@ callbacks:
         params:
             - name: filename
               type: string
+              c_type: const char*
               const: true
             - name: state
               type: int32
+              c_type: const int32_t
               const: true
             - name: data
               type: unsafe.Pointer
+              c_type: void*
         returns: ""

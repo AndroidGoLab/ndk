@@ -7,6 +7,7 @@ import (
 // TestGoTypeToCGoType_AllScalars verifies all Go scalar types have CGo mappings.
 func TestGoTypeToCGoType_AllScalars(t *testing.T) {
 	cases := map[string]string{
+		"byte":    "C.char",
 		"int8":    "C.int8_t",
 		"uint8":   "C.uint8_t",
 		"int16":   "C.int16_t",
@@ -29,6 +30,7 @@ func TestGoTypeToCGoType_AllScalars(t *testing.T) {
 // TestGoTypeToCHeaderType_AllScalars verifies all Go scalar types have C header mappings.
 func TestGoTypeToCHeaderType_AllScalars(t *testing.T) {
 	cases := map[string]string{
+		"byte":    "char",
 		"int8":    "int8_t",
 		"uint8":   "uint8_t",
 		"int16":   "int16_t",

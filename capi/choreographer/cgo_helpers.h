@@ -7,7 +7,7 @@
 #define __CGOGEN 1
 
 // AChoreographer_frameCallback_b2a0e09c is a proxy for callback AChoreographer_frameCallback.
-void AChoreographer_frameCallback_b2a0e09c(int64_t frameTimeNanos, void* data);
+void AChoreographer_frameCallback_b2a0e09c(long frameTimeNanos, void* data);
 
 // AChoreographer_frameCallback64_a698eb9e is a proxy for callback AChoreographer_frameCallback64.
 void AChoreographer_frameCallback64_a698eb9e(int64_t frameTimeNanos, void* data);
@@ -16,5 +16,5 @@ void AChoreographer_frameCallback64_a698eb9e(int64_t frameTimeNanos, void* data)
 void AChoreographer_refreshRateCallback_872a4fea(int64_t vsyncPeriodNanos, void* data);
 
 // AChoreographer_vsyncCallback_c3e58802 is a proxy for callback AChoreographer_vsyncCallback.
-void AChoreographer_vsyncCallback_c3e58802(AChoreographerFrameCallbackData* callbackData, void* data);
+void AChoreographer_vsyncCallback_c3e58802(const AChoreographerFrameCallbackData* callbackData, void* data);
 

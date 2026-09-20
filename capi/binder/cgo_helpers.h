@@ -15,7 +15,7 @@ void* AIBinder_Class_onCreate_ae3e288c(void* args);
 void AIBinder_Class_onDestroy_2c719d10(void* userData);
 
 // AIBinder_Class_onTransact_4c5b3f35 is a proxy for callback AIBinder_Class_onTransact.
-binder_status_t AIBinder_Class_onTransact_4c5b3f35(AIBinder* binder, transaction_code_t code, AParcel* in, AParcel* out);
+binder_status_t AIBinder_Class_onTransact_4c5b3f35(AIBinder* binder, transaction_code_t code, const AParcel* in, AParcel* out);
 
 // AIBinder_DeathRecipient_onBinderDied_7d6f4f1b is a proxy for callback AIBinder_DeathRecipient_onBinderDied.
 void AIBinder_DeathRecipient_onBinderDied_7d6f4f1b();
@@ -24,59 +24,58 @@ void AIBinder_DeathRecipient_onBinderDied_7d6f4f1b();
 void AIBinder_DeathRecipient_onBinderUnlinked_6d499f91();
 
 // AIBinder_onDump_04709357 is a proxy for callback AIBinder_onDump.
-binder_status_t AIBinder_onDump_04709357(AIBinder* binder, int fd, int8_t** args, unsigned int numArgs);
+binder_status_t AIBinder_onDump_04709357(AIBinder* binder, int fd, const char** args, uint32_t numArgs);
 
 // AParcel_boolArrayAllocator_6ce04d29 is a proxy for callback AParcel_boolArrayAllocator.
-_Bool AParcel_boolArrayAllocator_6ce04d29(void* arrayData, int length);
+_Bool AParcel_boolArrayAllocator_6ce04d29(void* arrayData, int32_t length);
 
 // AParcel_boolArrayGetter_58f10d8e is a proxy for callback AParcel_boolArrayGetter.
-_Bool AParcel_boolArrayGetter_58f10d8e(void* arrayData, uint64_t index);
+_Bool AParcel_boolArrayGetter_58f10d8e(const void* arrayData, size_t index);
 
 // AParcel_boolArraySetter_c31d06a6 is a proxy for callback AParcel_boolArraySetter.
-void AParcel_boolArraySetter_c31d06a6(void* arrayData, uint64_t index, _Bool value);
+void AParcel_boolArraySetter_c31d06a6(void* arrayData, size_t index, bool value);
 
 // AParcel_byteArrayAllocator_0f5d9bcb is a proxy for callback AParcel_byteArrayAllocator.
-_Bool AParcel_byteArrayAllocator_0f5d9bcb(void* arrayData, int length, int8_t** outBuffer);
+_Bool AParcel_byteArrayAllocator_0f5d9bcb(void* arrayData, int32_t length, int8_t** outBuffer);
 
 // AParcel_charArrayAllocator_e28a23c0 is a proxy for callback AParcel_charArrayAllocator.
-_Bool AParcel_charArrayAllocator_e28a23c0(void* arrayData, int length, char16_t** outBuffer);
+_Bool AParcel_charArrayAllocator_e28a23c0(void* arrayData, int32_t length, char16_t** outBuffer);
 
 // AParcel_doubleArrayAllocator_0d8e072d is a proxy for callback AParcel_doubleArrayAllocator.
-_Bool AParcel_doubleArrayAllocator_0d8e072d(void* arrayData, int length, double** outBuffer);
+_Bool AParcel_doubleArrayAllocator_0d8e072d(void* arrayData, int32_t length, double** outBuffer);
 
 // AParcel_floatArrayAllocator_ddd314b6 is a proxy for callback AParcel_floatArrayAllocator.
-_Bool AParcel_floatArrayAllocator_ddd314b6(void* arrayData, int length, float** outBuffer);
+_Bool AParcel_floatArrayAllocator_ddd314b6(void* arrayData, int32_t length, float** outBuffer);
 
 // AParcel_int32ArrayAllocator_632db075 is a proxy for callback AParcel_int32ArrayAllocator.
-_Bool AParcel_int32ArrayAllocator_632db075(void* arrayData, int length, int** outBuffer);
+_Bool AParcel_int32ArrayAllocator_632db075(void* arrayData, int32_t length, int32_t** outBuffer);
 
 // AParcel_int64ArrayAllocator_e9ccd3bd is a proxy for callback AParcel_int64ArrayAllocator.
-_Bool AParcel_int64ArrayAllocator_e9ccd3bd(void* arrayData, int length, int64_t** outBuffer);
+_Bool AParcel_int64ArrayAllocator_e9ccd3bd(void* arrayData, int32_t length, int64_t** outBuffer);
 
 // AParcel_parcelableArrayAllocator_6a96d230 is a proxy for callback AParcel_parcelableArrayAllocator.
-_Bool AParcel_parcelableArrayAllocator_6a96d230(void* arrayData, int length);
+_Bool AParcel_parcelableArrayAllocator_6a96d230(void* arrayData, int32_t length);
 
 // AParcel_readParcelableElement_f5964747 is a proxy for callback AParcel_readParcelableElement.
-binder_status_t AParcel_readParcelableElement_f5964747(AParcel* parcel, void* arrayData, uint64_t index);
+binder_status_t AParcel_readParcelableElement_f5964747(const AParcel* parcel, void* arrayData, size_t index);
 
 // AParcel_stringAllocator_fed8100a is a proxy for callback AParcel_stringAllocator.
-_Bool AParcel_stringAllocator_fed8100a(void* stringData, int length, int8_t** buffer);
+_Bool AParcel_stringAllocator_fed8100a(void* stringData, int32_t length, char** buffer);
 
 // AParcel_stringArrayAllocator_a431f501 is a proxy for callback AParcel_stringArrayAllocator.
-_Bool AParcel_stringArrayAllocator_a431f501(void* arrayData, int length);
+_Bool AParcel_stringArrayAllocator_a431f501(void* arrayData, int32_t length);
 
 // AParcel_stringArrayElementAllocator_9ac166ca is a proxy for callback AParcel_stringArrayElementAllocator.
-_Bool AParcel_stringArrayElementAllocator_9ac166ca(void* arrayData, uint64_t index, int length, int8_t** buffer);
+_Bool AParcel_stringArrayElementAllocator_9ac166ca(void* arrayData, size_t index, int32_t length, char** buffer);
 
 // AParcel_stringArrayElementGetter_6817b794 is a proxy for callback AParcel_stringArrayElementGetter.
-int8_t* AParcel_stringArrayElementGetter_6817b794(void* arrayData, uint64_t index, int* outLength);
+const char* AParcel_stringArrayElementGetter_6817b794(const void* arrayData, size_t index, int32_t* outLength);
 
 // AParcel_uint32ArrayAllocator_dffad45c is a proxy for callback AParcel_uint32ArrayAllocator.
-_Bool AParcel_uint32ArrayAllocator_dffad45c(void* arrayData, int length, unsigned int** outBuffer);
+_Bool AParcel_uint32ArrayAllocator_dffad45c(void* arrayData, int32_t length, uint32_t** outBuffer);
 
 // AParcel_uint64ArrayAllocator_cf52b274 is a proxy for callback AParcel_uint64ArrayAllocator.
-_Bool AParcel_uint64ArrayAllocator_cf52b274(void* arrayData, int length, uint64_t** outBuffer);
+_Bool AParcel_uint64ArrayAllocator_cf52b274(void* arrayData, int32_t length, uint64_t** outBuffer);
 
 // AParcel_writeParcelableElement_73cca07c is a proxy for callback AParcel_writeParcelableElement.
-binder_status_t AParcel_writeParcelableElement_73cca07c(AParcel* parcel, void* arrayData, uint64_t index);
-
+binder_status_t AParcel_writeParcelableElement_73cca07c(AParcel* parcel, const void* arrayData, size_t index);

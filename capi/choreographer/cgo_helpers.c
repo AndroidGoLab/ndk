@@ -2,7 +2,7 @@
 
 #include "_cgo_export.h"
 
-void AChoreographer_frameCallback_b2a0e09c(int64_t frameTimeNanos, void* data) {
+void AChoreographer_frameCallback_b2a0e09c(long frameTimeNanos, void* data) {
 	AChoreographer_frameCallbackB2A0E09C(frameTimeNanos, data);
 }
 
@@ -14,7 +14,7 @@ void AChoreographer_refreshRateCallback_872a4fea(int64_t vsyncPeriodNanos, void*
 	AChoreographer_refreshRateCallback872A4FEA(vsyncPeriodNanos, data);
 }
 
-void AChoreographer_vsyncCallback_c3e58802(AChoreographerFrameCallbackData* callbackData, void* data) {
-	AChoreographer_vsyncCallbackC3E58802(callbackData, data);
+void AChoreographer_vsyncCallback_c3e58802(const AChoreographerFrameCallbackData* callbackData, void* data) {
+	AChoreographer_vsyncCallbackC3E58802((AChoreographerFrameCallbackData*)callbackData, data);
 }
 

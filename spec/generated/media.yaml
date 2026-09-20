@@ -966,7 +966,8 @@ functions:
             - name: ""
               type: '*AMediaCodec'
             - name: out_name
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
         returns: media_status_t
     AMediaCodec_getOutputBuffer:
@@ -1337,8 +1338,9 @@ functions:
             - name: numheaders
               type: int32
             - name: key_values
-              type: '*string'
-              direction: out
+              type: '**int8'
+              c_type: const char*const*
+              const: true
         returns: '*AMediaDataSource'
     AMediaDataSource_setClose:
         c_name: AMediaDataSource_setClose
@@ -1484,8 +1486,10 @@ functions:
             - name: keyRequestSize
               type: '*uint64'
             - name: defaultUrl
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
               direction: out
+              const: true
             - name: keyRequestType
               type: '*AMediaDrmKeyRequestType'
         returns: media_status_t
@@ -1507,8 +1511,10 @@ functions:
             - name: propertyName
               type: string
             - name: propertyValue
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
               direction: out
+              const: true
         returns: media_status_t
     AMediaDrm_getProvisionRequest:
         c_name: AMediaDrm_getProvisionRequest
@@ -1521,8 +1527,10 @@ functions:
             - name: provisionRequestSize
               type: '*uint64'
             - name: serverUrl
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
               direction: out
+              const: true
         returns: media_status_t
     AMediaDrm_getSecureStops:
         c_name: AMediaDrm_getSecureStops
@@ -1960,8 +1968,10 @@ functions:
             - name: name
               type: string
             - name: out
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
               direction: out
+              const: true
         returns: bool
     AMediaFormat_new:
         c_name: AMediaFormat_new
@@ -2151,141 +2161,187 @@ callbacks:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: reader
               type: '*AImageReader'
+              c_type: AImageReader*
             - name: buffer
               type: '*AHardwareBuffer'
+              c_type: AHardwareBuffer*
         returns: ""
     AImageReader_ImageCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: reader
               type: '*AImageReader'
+              c_type: AImageReader*
         returns: ""
     AMediaCodecOnAsyncError:
         params:
             - name: codec
               type: '*AMediaCodec'
+              c_type: AMediaCodec*
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: _error
               type: media_status_t
+              c_type: media_status_t
             - name: actionCode
               type: int32
+              c_type: int32_t
             - name: detail
               type: string
+              c_type: const char*
               const: true
         returns: ""
     AMediaCodecOnAsyncFormatChanged:
         params:
             - name: codec
               type: '*AMediaCodec'
+              c_type: AMediaCodec*
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: format
               type: '*AMediaFormat'
+              c_type: AMediaFormat*
         returns: ""
     AMediaCodecOnAsyncInputAvailable:
         params:
             - name: codec
               type: '*AMediaCodec'
+              c_type: AMediaCodec*
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: index
               type: int32
+              c_type: int32_t
         returns: ""
     AMediaCodecOnAsyncOutputAvailable:
         params:
             - name: codec
               type: '*AMediaCodec'
+              c_type: AMediaCodec*
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: index
               type: int32
+              c_type: int32_t
             - name: bufferInfo
               type: '*AMediaCodecBufferInfo'
+              c_type: AMediaCodecBufferInfo*
         returns: ""
     AMediaCodecOnFrameRendered:
         params:
             - name: codec
               type: '*AMediaCodec'
+              c_type: AMediaCodec*
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: mediaTimeUs
               type: int64
+              c_type: int64_t
             - name: systemNano
               type: int64
+              c_type: int64_t
         returns: ""
     AMediaDataSourceClose:
         params:
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
         returns: ""
     AMediaDataSourceGetAvailableSize:
         params:
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: offset
               type: off64_t
+              c_type: off64_t
         returns: int64
     AMediaDataSourceGetSize:
         params:
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
         returns: int64
     AMediaDataSourceReadAt:
         params:
             - name: userdata
               type: unsafe.Pointer
+              c_type: void*
             - name: offset
               type: off64_t
+              c_type: off64_t
             - name: buffer
               type: unsafe.Pointer
+              c_type: void*
             - name: size
               type: uint64
+              c_type: size_t
         returns: int64
     AMediaDrmEventListener:
         params:
             - name: p0
               type: '*AMediaDrm'
+              c_type: AMediaDrm*
             - name: sessionId
               type: '*AMediaDrmSessionId'
+              c_type: const AMediaDrmSessionId*
               const: true
             - name: eventType
               type: AMediaDrmEventType
+              c_type: AMediaDrmEventType
             - name: extra
               type: int32
+              c_type: int
             - name: data
               type: '*uint8'
+              c_type: const uint8_t*
               const: true
             - name: dataSize
               type: uint64
+              c_type: size_t
         returns: ""
     AMediaDrmExpirationUpdateListener:
         params:
             - name: p0
               type: '*AMediaDrm'
+              c_type: AMediaDrm*
             - name: sessionId
               type: '*AMediaDrmSessionId'
+              c_type: const AMediaDrmSessionId*
               const: true
             - name: expiryTimeInMS
               type: int64
+              c_type: int64_t
         returns: ""
     AMediaDrmKeysChangeListener:
         params:
             - name: p0
               type: '*AMediaDrm'
+              c_type: AMediaDrm*
             - name: sessionId
               type: '*AMediaDrmSessionId'
+              c_type: const AMediaDrmSessionId*
               const: true
             - name: keyStatus
               type: '*AMediaDrmKeyStatus'
+              c_type: const AMediaDrmKeyStatus*
               const: true
             - name: numKeys
               type: uint64
+              c_type: size_t
             - name: hasNewUsableKey
               type: bool
+              c_type: bool
         returns: ""
 structs:
     ADoubleRange:

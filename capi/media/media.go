@@ -636,9 +636,17 @@ func AMediaCodec_getInputFormat(p0 *AMediaCodec) *AMediaFormat {
 	return __v
 }
 
-func AMediaCodec_getName(p0 *AMediaCodec, out_name *string) Media_status_t {
+func AMediaCodec_getName(p0 *AMediaCodec, out_name **int8) Media_status_t {
 	cp0, cp0AllocMap := (*C.AMediaCodec)(unsafe.Pointer(p0)), cgoAllocsUnknown
-	__ret := C.AMediaCodec_getName(cp0, (**C.char)(unsafe.Pointer(out_name)))
+	cout_name, cout_nameAllocMap := (**C.char)(unsafe.Pointer(out_name)), cgoAllocsUnknown
+	var pinnercout_name runtime.Pinner
+	pinnercout_name.Pin(out_name)
+	if out_name != nil {
+		pinnercout_name.Pin(unsafe.Pointer(*out_name))
+	}
+	defer pinnercout_name.Unpin()
+	__ret := C.AMediaCodec_getName(cp0, cout_name)
+	runtime.KeepAlive(cout_nameAllocMap)
 	runtime.KeepAlive(cp0AllocMap)
 	__v := (Media_status_t)(__ret)
 	return __v
@@ -866,10 +874,18 @@ func AMediaDataSource_new() *AMediaDataSource {
 	return __v
 }
 
-func AMediaDataSource_newUri(uri string, numheaders int32, key_values *string) *AMediaDataSource {
+func AMediaDataSource_newUri(uri string, numheaders int32, key_values **int8) *AMediaDataSource {
 	curi, curiAllocMap := UnpackPCharString(uri)
 	cnumheaders, cnumheadersAllocMap := (C.int)(numheaders), cgoAllocsUnknown
-	__ret := C.AMediaDataSource_newUri(curi, cnumheaders, (**C.char)(unsafe.Pointer(key_values)))
+	ckey_values, ckey_valuesAllocMap := (**C.char)(unsafe.Pointer(key_values)), cgoAllocsUnknown
+	var pinnerckey_values runtime.Pinner
+	pinnerckey_values.Pin(key_values)
+	if key_values != nil {
+		pinnerckey_values.Pin(unsafe.Pointer(*key_values))
+	}
+	defer pinnerckey_values.Unpin()
+	__ret := C.AMediaDataSource_newUri(curi, cnumheaders, ckey_values)
+	runtime.KeepAlive(ckey_valuesAllocMap)
 	runtime.KeepAlive(cnumheadersAllocMap)
 	runtime.KeepAlive(curiAllocMap)
 	__v := (*AMediaDataSource)(unsafe.Pointer(__ret))
@@ -1010,7 +1026,7 @@ func AMediaDrm_getKeyRequest(p0 *AMediaDrm, scope *AMediaDrmScope, init *uint8, 
 	return __v
 }
 
-func AMediaDrm_getKeyRequestWithDefaultUrlAndType(p0 *AMediaDrm, scope *AMediaDrmScope, init *uint8, initSize uint64, mimeType string, keyType AMediaDrmKeyType, optionalParameters *AMediaDrmKeyValue, numOptionalParameters uint64, keyRequest **uint8, keyRequestSize *uint64, defaultUrl *string, keyRequestType *AMediaDrmKeyRequestType) Media_status_t {
+func AMediaDrm_getKeyRequestWithDefaultUrlAndType(p0 *AMediaDrm, scope *AMediaDrmScope, init *uint8, initSize uint64, mimeType string, keyType AMediaDrmKeyType, optionalParameters *AMediaDrmKeyValue, numOptionalParameters uint64, keyRequest **uint8, keyRequestSize *uint64, defaultUrl **int8, keyRequestType *AMediaDrmKeyRequestType) Media_status_t {
 	cp0, cp0AllocMap := (*C.AMediaDrm)(unsafe.Pointer(p0)), cgoAllocsUnknown
 	cscope, cscopeAllocMap := (*C.AMediaDrmScope)(unsafe.Pointer(scope)), cgoAllocsUnknown
 	cinit, cinitAllocMap := (*C.uint8_t)(unsafe.Pointer(init)), cgoAllocsUnknown
@@ -1027,9 +1043,17 @@ func AMediaDrm_getKeyRequestWithDefaultUrlAndType(p0 *AMediaDrm, scope *AMediaDr
 	}
 	defer pinnerckeyRequest.Unpin()
 	ckeyRequestSize, ckeyRequestSizeAllocMap := (*C.uint64_t)(unsafe.Pointer(keyRequestSize)), cgoAllocsUnknown
+	cdefaultUrl, cdefaultUrlAllocMap := (**C.char)(unsafe.Pointer(defaultUrl)), cgoAllocsUnknown
+	var pinnercdefaultUrl runtime.Pinner
+	pinnercdefaultUrl.Pin(defaultUrl)
+	if defaultUrl != nil {
+		pinnercdefaultUrl.Pin(unsafe.Pointer(*defaultUrl))
+	}
+	defer pinnercdefaultUrl.Unpin()
 	ckeyRequestType, ckeyRequestTypeAllocMap := (*C.AMediaDrmKeyRequestType)(unsafe.Pointer(keyRequestType)), cgoAllocsUnknown
-	__ret := C.AMediaDrm_getKeyRequestWithDefaultUrlAndType(cp0, cscope, cinit, cinitSize, cmimeType, ckeyType, coptionalParameters, cnumOptionalParameters, ckeyRequest, ckeyRequestSize, (**C.char)(unsafe.Pointer(defaultUrl)), ckeyRequestType)
+	__ret := C.AMediaDrm_getKeyRequestWithDefaultUrlAndType(cp0, cscope, cinit, cinitSize, cmimeType, ckeyType, coptionalParameters, cnumOptionalParameters, ckeyRequest, ckeyRequestSize, cdefaultUrl, ckeyRequestType)
 	runtime.KeepAlive(ckeyRequestTypeAllocMap)
+	runtime.KeepAlive(cdefaultUrlAllocMap)
 	runtime.KeepAlive(ckeyRequestSizeAllocMap)
 	runtime.KeepAlive(ckeyRequestAllocMap)
 	runtime.KeepAlive(cnumOptionalParametersAllocMap)
@@ -1056,17 +1080,25 @@ func AMediaDrm_getPropertyByteArray(p0 *AMediaDrm, propertyName string, property
 	return __v
 }
 
-func AMediaDrm_getPropertyString(p0 *AMediaDrm, propertyName string, propertyValue *string) Media_status_t {
+func AMediaDrm_getPropertyString(p0 *AMediaDrm, propertyName string, propertyValue **int8) Media_status_t {
 	cp0, cp0AllocMap := (*C.AMediaDrm)(unsafe.Pointer(p0)), cgoAllocsUnknown
 	cpropertyName, cpropertyNameAllocMap := UnpackPCharString(propertyName)
-	__ret := C.AMediaDrm_getPropertyString(cp0, cpropertyName, (**C.char)(unsafe.Pointer(propertyValue)))
+	cpropertyValue, cpropertyValueAllocMap := (**C.char)(unsafe.Pointer(propertyValue)), cgoAllocsUnknown
+	var pinnercpropertyValue runtime.Pinner
+	pinnercpropertyValue.Pin(propertyValue)
+	if propertyValue != nil {
+		pinnercpropertyValue.Pin(unsafe.Pointer(*propertyValue))
+	}
+	defer pinnercpropertyValue.Unpin()
+	__ret := C.AMediaDrm_getPropertyString(cp0, cpropertyName, cpropertyValue)
+	runtime.KeepAlive(cpropertyValueAllocMap)
 	runtime.KeepAlive(cpropertyNameAllocMap)
 	runtime.KeepAlive(cp0AllocMap)
 	__v := (Media_status_t)(__ret)
 	return __v
 }
 
-func AMediaDrm_getProvisionRequest(p0 *AMediaDrm, provisionRequest **uint8, provisionRequestSize *uint64, serverUrl *string) Media_status_t {
+func AMediaDrm_getProvisionRequest(p0 *AMediaDrm, provisionRequest **uint8, provisionRequestSize *uint64, serverUrl **int8) Media_status_t {
 	cp0, cp0AllocMap := (*C.AMediaDrm)(unsafe.Pointer(p0)), cgoAllocsUnknown
 	cprovisionRequest, cprovisionRequestAllocMap := (**C.uint8_t)(unsafe.Pointer(provisionRequest)), cgoAllocsUnknown
 	var pinnercprovisionRequest runtime.Pinner
@@ -1076,7 +1108,15 @@ func AMediaDrm_getProvisionRequest(p0 *AMediaDrm, provisionRequest **uint8, prov
 	}
 	defer pinnercprovisionRequest.Unpin()
 	cprovisionRequestSize, cprovisionRequestSizeAllocMap := (*C.uint64_t)(unsafe.Pointer(provisionRequestSize)), cgoAllocsUnknown
-	__ret := C.AMediaDrm_getProvisionRequest(cp0, cprovisionRequest, cprovisionRequestSize, (**C.char)(unsafe.Pointer(serverUrl)))
+	cserverUrl, cserverUrlAllocMap := (**C.char)(unsafe.Pointer(serverUrl)), cgoAllocsUnknown
+	var pinnercserverUrl runtime.Pinner
+	pinnercserverUrl.Pin(serverUrl)
+	if serverUrl != nil {
+		pinnercserverUrl.Pin(unsafe.Pointer(*serverUrl))
+	}
+	defer pinnercserverUrl.Unpin()
+	__ret := C.AMediaDrm_getProvisionRequest(cp0, cprovisionRequest, cprovisionRequestSize, cserverUrl)
+	runtime.KeepAlive(cserverUrlAllocMap)
 	runtime.KeepAlive(cprovisionRequestSizeAllocMap)
 	runtime.KeepAlive(cprovisionRequestAllocMap)
 	runtime.KeepAlive(cp0AllocMap)
@@ -1604,10 +1644,18 @@ func AMediaFormat_getSize(p0 *AMediaFormat, name string, out *uint64) bool {
 	return __v
 }
 
-func AMediaFormat_getString(p0 *AMediaFormat, name string, out *string) bool {
+func AMediaFormat_getString(p0 *AMediaFormat, name string, out **int8) bool {
 	cp0, cp0AllocMap := (*C.AMediaFormat)(unsafe.Pointer(p0)), cgoAllocsUnknown
 	cname, cnameAllocMap := UnpackPCharString(name)
-	__ret := C.AMediaFormat_getString(cp0, cname, (**C.char)(unsafe.Pointer(out)))
+	cout, coutAllocMap := (**C.char)(unsafe.Pointer(out)), cgoAllocsUnknown
+	var pinnercout runtime.Pinner
+	pinnercout.Pin(out)
+	if out != nil {
+		pinnercout.Pin(unsafe.Pointer(*out))
+	}
+	defer pinnercout.Unpin()
+	__ret := C.AMediaFormat_getString(cp0, cname, cout)
+	runtime.KeepAlive(coutAllocMap)
 	runtime.KeepAlive(cnameAllocMap)
 	runtime.KeepAlive(cp0AllocMap)
 	__v := (bool)(__ret)

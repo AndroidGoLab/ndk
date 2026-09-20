@@ -50,7 +50,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -77,7 +78,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -102,7 +104,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -129,7 +132,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -154,7 +158,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -181,7 +186,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -206,7 +212,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -233,7 +240,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -259,7 +267,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -276,7 +285,8 @@ functions:
             - name: key
               type: string
             - name: val
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: stringAllocator
               type: APersistableBundle_stringAllocator
@@ -289,7 +299,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -306,7 +317,8 @@ functions:
             - name: key
               type: string
             - name: buffer
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -321,7 +333,8 @@ functions:
             - name: pBundle
               type: '*APersistableBundle'
             - name: outKeys
-              type: '*string'
+              type: '**int8'
+              c_type: char**
               direction: out
             - name: bufferSizeBytes
               type: int32
@@ -457,8 +470,9 @@ functions:
             - name: key
               type: string
             - name: vec
-              type: '*string'
-              direction: out
+              type: '**int8'
+              c_type: const char*const*
+              const: true
             - name: num
               type: int32
         returns: ""
@@ -487,4 +501,12 @@ functions:
         returns: binder_status_t
 callbacks:
     APersistableBundle_stringAllocator:
-        returns: ""
+        params:
+            - name: sizeBytes
+              type: int32
+              c_type: int32_t
+            - name: context
+              type: unsafe.Pointer
+              c_type: void*
+        returns: '*int8'
+        returns_c_type: char*

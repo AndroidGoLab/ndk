@@ -29,7 +29,7 @@ func TestSpecRoundTrip(t *testing.T) {
 			"AAudio_createStreamBuilder": {
 				CName: "AAudio_createStreamBuilder",
 				Params: []specmodel.Param{
-					{Name: "builder", Type: "**AAudioStreamBuilder", Direction: "out"},
+					{Name: "builder", Type: "**AAudioStreamBuilder", CType: "AAudioStreamBuilder**", Direction: "out"},
 				},
 				Returns: "Aaudio_result_t",
 			},
@@ -77,6 +77,9 @@ func TestSpecRoundTrip(t *testing.T) {
 	fn := got.Functions["AAudio_createStreamBuilder"]
 	if fn.Params[0].Direction != "out" {
 		t.Errorf("param direction = %q, want out", fn.Params[0].Direction)
+	}
+	if fn.Params[0].CType != "AAudioStreamBuilder**" {
+		t.Errorf("param C type = %q, want AAudioStreamBuilder**", fn.Params[0].CType)
 	}
 	if len(got.Callbacks) != 1 {
 		t.Errorf("callbacks count = %d, want 1", len(got.Callbacks))

@@ -233,6 +233,7 @@ func parseCParams(paramsStr string) []specmodel.Param {
 // into a specmodel.Param with normalized Go-style type.
 func parseSingleCParam(decl string) specmodel.Param {
 	decl = strings.TrimSpace(decl)
+	decl = stripNullabilityAnnotations(decl)
 
 	// Split into tokens.
 	tokens := strings.Fields(decl)
@@ -281,6 +282,7 @@ func parseSingleCParam(decl string) specmodel.Param {
 	}
 
 	typeName := strings.Join(typeNameParts, " ")
+	cDeclarator := normalizeCDeclarator(typeTokens, nameStars)
 
 	// Normalize to Go-style pointer notation.
 	goType := typeName
@@ -303,8 +305,36 @@ func parseSingleCParam(decl string) specmodel.Param {
 	return specmodel.Param{
 		Name:  name,
 		Type:  goType,
+		CType: cDeclarator,
 		Const: isConst,
 	}
+}
+
+// stripNullabilityAnnotations removes Clang nullability attributes from a C declaration.
+func stripNullabilityAnnotations(s string) string {
+	for _, annotation := range []string{
+		"_Nonnull",
+		"_Nullable",
+		"_Null_unspecified",
+		"__nonnull",
+		"__nullable",
+	} {
+		s = strings.ReplaceAll(s, annotation, "")
+	}
+	for strings.Contains(s, "  ") {
+		s = strings.ReplaceAll(s, "  ", " ")
+	}
+	return strings.TrimSpace(s)
+}
+
+func normalizeCDeclarator(typeTokens []string, nameStars int) string {
+	declarator := strings.TrimSpace(strings.Join(typeTokens, " "))
+	declarator = strings.ReplaceAll(declarator, " *", "*")
+	declarator = strings.ReplaceAll(declarator, "* ", "*")
+	if declarator == "" {
+		declarator = "void"
+	}
+	return declarator + strings.Repeat("*", nameStars)
 }
 
 // ParseFunctionsFromDir reads all .h files in dir and extracts function declarations.
@@ -402,14 +432,16 @@ func parseCFuncParams(paramsStr string) []specmodel.Param {
 		goType := cTypeToGoType(raw.Type)
 
 		dir := ""
-		if isOut || isDoublePointerType(goType) {
+		if isOut || (isDoublePointerType(goType) && !raw.Const) {
 			dir = "out"
 		}
 
 		params = append(params, specmodel.Param{
 			Name:      raw.Name,
 			Type:      goType,
+			CType:     raw.CType,
 			Direction: dir,
+			Const:     raw.Const,
 		})
 	}
 	return params

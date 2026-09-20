@@ -180,7 +180,7 @@ func NewAMediaCodecOnAsyncErrorRef(ref unsafe.Pointer) *AMediaCodecOnAsyncError 
 }
 
 //export AMediaCodecOnAsyncErrorF1342A37
-func AMediaCodecOnAsyncErrorF1342A37(ccodec *C.AMediaCodec, cuserdata unsafe.Pointer, c_error C.media_status_t, cactionCode C.int, cdetail *C.char) {
+func AMediaCodecOnAsyncErrorF1342A37(ccodec *C.AMediaCodec, cuserdata unsafe.Pointer, c_error C.media_status_t, cactionCode C.int32_t, cdetail *C.char) {
 	if aMediaCodecOnAsyncErrorF1342A37Func != nil {
 		codecf1342a37 := (*AMediaCodec)(unsafe.Pointer(ccodec))
 		userdataf1342a37 := (unsafe.Pointer)(unsafe.Pointer(cuserdata))
@@ -258,7 +258,7 @@ func NewAMediaCodecOnAsyncInputAvailableRef(ref unsafe.Pointer) *AMediaCodecOnAs
 }
 
 //export AMediaCodecOnAsyncInputAvailable2F5096C4
-func AMediaCodecOnAsyncInputAvailable2F5096C4(ccodec *C.AMediaCodec, cuserdata unsafe.Pointer, cindex C.int) {
+func AMediaCodecOnAsyncInputAvailable2F5096C4(ccodec *C.AMediaCodec, cuserdata unsafe.Pointer, cindex C.int32_t) {
 	if aMediaCodecOnAsyncInputAvailable2F5096C4Func != nil {
 		codec2f5096c4 := (*AMediaCodec)(unsafe.Pointer(ccodec))
 		userdata2f5096c4 := (unsafe.Pointer)(unsafe.Pointer(cuserdata))
@@ -296,7 +296,7 @@ func NewAMediaCodecOnAsyncOutputAvailableRef(ref unsafe.Pointer) *AMediaCodecOnA
 }
 
 //export AMediaCodecOnAsyncOutputAvailableF41B4C39
-func AMediaCodecOnAsyncOutputAvailableF41B4C39(ccodec *C.AMediaCodec, cuserdata unsafe.Pointer, cindex C.int, cbufferInfo *C.AMediaCodecBufferInfo) {
+func AMediaCodecOnAsyncOutputAvailableF41B4C39(ccodec *C.AMediaCodec, cuserdata unsafe.Pointer, cindex C.int32_t, cbufferInfo *C.AMediaCodecBufferInfo) {
 	if aMediaCodecOnAsyncOutputAvailableF41B4C39Func != nil {
 		codecf41b4c39 := (*AMediaCodec)(unsafe.Pointer(ccodec))
 		userdataf41b4c39 := (unsafe.Pointer)(unsafe.Pointer(cuserdata))
@@ -485,7 +485,7 @@ func NewAMediaDataSourceReadAtRef(ref unsafe.Pointer) *AMediaDataSourceReadAt {
 }
 
 //export AMediaDataSourceReadAt865C1A4B
-func AMediaDataSourceReadAt865C1A4B(cuserdata unsafe.Pointer, coffset C.off64_t, cbuffer unsafe.Pointer, csize C.uint64_t) C.int64_t {
+func AMediaDataSourceReadAt865C1A4B(cuserdata unsafe.Pointer, coffset C.off64_t, cbuffer unsafe.Pointer, csize C.size_t) C.int64_t {
 	if aMediaDataSourceReadAt865C1A4BFunc != nil {
 		userdata865c1a4b := (unsafe.Pointer)(unsafe.Pointer(cuserdata))
 		offset865c1a4b := (Off64_t)(coffset)
@@ -525,7 +525,7 @@ func NewAMediaDrmEventListenerRef(ref unsafe.Pointer) *AMediaDrmEventListener {
 }
 
 //export AMediaDrmEventListener76BB5445
-func AMediaDrmEventListener76BB5445(cp0 *C.AMediaDrm, csessionId *C.AMediaDrmSessionId, ceventType C.AMediaDrmEventType, cextra C.int, cdata *C.uint8_t, cdataSize C.uint64_t) {
+func AMediaDrmEventListener76BB5445(cp0 *C.AMediaDrm, csessionId *C.AMediaDrmSessionId, ceventType C.AMediaDrmEventType, cextra C.int, cdata *C.uint8_t, cdataSize C.size_t) {
 	if aMediaDrmEventListener76BB5445Func != nil {
 		p076bb5445 := (*AMediaDrm)(unsafe.Pointer(cp0))
 		sessionId76bb5445 := (*AMediaDrmSessionId)(unsafe.Pointer(csessionId))
@@ -604,7 +604,7 @@ func NewAMediaDrmKeysChangeListenerRef(ref unsafe.Pointer) *AMediaDrmKeysChangeL
 }
 
 //export AMediaDrmKeysChangeListenerFD05E34A
-func AMediaDrmKeysChangeListenerFD05E34A(cp0 *C.AMediaDrm, csessionId *C.AMediaDrmSessionId, ckeyStatus *C.AMediaDrmKeyStatus, cnumKeys C.uint64_t, chasNewUsableKey C._Bool) {
+func AMediaDrmKeysChangeListenerFD05E34A(cp0 *C.AMediaDrm, csessionId *C.AMediaDrmSessionId, ckeyStatus *C.AMediaDrmKeyStatus, cnumKeys C.size_t, chasNewUsableKey C.bool) {
 	if aMediaDrmKeysChangeListenerFD05E34AFunc != nil {
 		p0fd05e34a := (*AMediaDrm)(unsafe.Pointer(cp0))
 		sessionIdfd05e34a := (*AMediaDrmSessionId)(unsafe.Pointer(csessionId))

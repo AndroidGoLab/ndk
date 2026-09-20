@@ -53,15 +53,23 @@ func APersistableBundle_getBoolean(pBundle *APersistableBundle, key string, val 
 	return __v
 }
 
-func APersistableBundle_getBooleanKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getBooleanKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getBooleanKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getBooleanKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -81,15 +89,23 @@ func APersistableBundle_getBooleanVector(pBundle *APersistableBundle, key string
 	return __v
 }
 
-func APersistableBundle_getBooleanVectorKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getBooleanVectorKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getBooleanVectorKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getBooleanVectorKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -107,15 +123,23 @@ func APersistableBundle_getDouble(pBundle *APersistableBundle, key string, val *
 	return __v
 }
 
-func APersistableBundle_getDoubleKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getDoubleKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getDoubleKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getDoubleKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -135,15 +159,23 @@ func APersistableBundle_getDoubleVector(pBundle *APersistableBundle, key string,
 	return __v
 }
 
-func APersistableBundle_getDoubleVectorKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getDoubleVectorKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getDoubleVectorKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getDoubleVectorKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -161,15 +193,23 @@ func APersistableBundle_getInt(pBundle *APersistableBundle, key string, val *int
 	return __v
 }
 
-func APersistableBundle_getIntKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getIntKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getIntKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getIntKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -189,15 +229,23 @@ func APersistableBundle_getIntVector(pBundle *APersistableBundle, key string, bu
 	return __v
 }
 
-func APersistableBundle_getIntVectorKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getIntVectorKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getIntVectorKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getIntVectorKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -215,15 +263,23 @@ func APersistableBundle_getLong(pBundle *APersistableBundle, key string, val *in
 	return __v
 }
 
-func APersistableBundle_getLongKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getLongKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getLongKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getLongKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -243,15 +299,23 @@ func APersistableBundle_getLongVector(pBundle *APersistableBundle, key string, b
 	return __v
 }
 
-func APersistableBundle_getLongVectorKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getLongVectorKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getLongVectorKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getLongVectorKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -275,73 +339,113 @@ func APersistableBundle_getPersistableBundle(pBundle *APersistableBundle, key st
 	return __v
 }
 
-func APersistableBundle_getPersistableBundleKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getPersistableBundleKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getPersistableBundleKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getPersistableBundleKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
 }
 
-func APersistableBundle_getString(pBundle *APersistableBundle, key string, val *string, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getString(pBundle *APersistableBundle, key string, val **int8, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
 	ckey, ckeyAllocMap := UnpackPCharString(key)
+	cval, cvalAllocMap := (**C.char)(unsafe.Pointer(val)), cgoAllocsUnknown
+	var pinnercval runtime.Pinner
+	pinnercval.Pin(val)
+	if val != nil {
+		pinnercval.Pin(unsafe.Pointer(*val))
+	}
+	defer pinnercval.Unpin()
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getString(cpBundle, ckey, (**C.char)(unsafe.Pointer(val)), cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getString(cpBundle, ckey, cval, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
+	runtime.KeepAlive(cvalAllocMap)
 	runtime.KeepAlive(ckeyAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
 }
 
-func APersistableBundle_getStringKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getStringKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getStringKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getStringKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
 }
 
-func APersistableBundle_getStringVector(pBundle *APersistableBundle, key string, buffer *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getStringVector(pBundle *APersistableBundle, key string, buffer **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
 	ckey, ckeyAllocMap := UnpackPCharString(key)
+	cbuffer, cbufferAllocMap := (**C.char)(unsafe.Pointer(buffer)), cgoAllocsUnknown
+	var pinnercbuffer runtime.Pinner
+	pinnercbuffer.Pin(buffer)
+	if buffer != nil {
+		pinnercbuffer.Pin(unsafe.Pointer(*buffer))
+	}
+	defer pinnercbuffer.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getStringVector(cpBundle, ckey, (**C.char)(unsafe.Pointer(buffer)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getStringVector(cpBundle, ckey, cbuffer, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(cbufferAllocMap)
 	runtime.KeepAlive(ckeyAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
 }
 
-func APersistableBundle_getStringVectorKeys(pBundle *APersistableBundle, outKeys *string, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
+func APersistableBundle_getStringVectorKeys(pBundle *APersistableBundle, outKeys **int8, bufferSizeBytes int32, stringAllocator APersistableBundle_stringAllocator, context unsafe.Pointer) int32 {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
+	coutKeys, coutKeysAllocMap := (**C.char)(unsafe.Pointer(outKeys)), cgoAllocsUnknown
+	var pinnercoutKeys runtime.Pinner
+	pinnercoutKeys.Pin(outKeys)
+	if outKeys != nil {
+		pinnercoutKeys.Pin(unsafe.Pointer(*outKeys))
+	}
+	defer pinnercoutKeys.Unpin()
 	cbufferSizeBytes, cbufferSizeBytesAllocMap := (C.int)(bufferSizeBytes), cgoAllocsUnknown
 	cstringAllocator, cstringAllocatorAllocMap := stringAllocator.PassValue()
 	ccontext, ccontextAllocMap := context, cgoAllocsUnknown
-	__ret := C.APersistableBundle_getStringVectorKeys(cpBundle, (**C.char)(unsafe.Pointer(outKeys)), cbufferSizeBytes, cstringAllocator, ccontext)
+	__ret := C.APersistableBundle_getStringVectorKeys(cpBundle, coutKeys, cbufferSizeBytes, cstringAllocator, ccontext)
 	runtime.KeepAlive(ccontextAllocMap)
 	runtime.KeepAlive(cstringAllocatorAllocMap)
 	runtime.KeepAlive(cbufferSizeBytesAllocMap)
+	runtime.KeepAlive(coutKeysAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 	__v := (int32)(__ret)
 	return __v
@@ -471,12 +575,20 @@ func APersistableBundle_putString(pBundle *APersistableBundle, key string, val s
 	runtime.KeepAlive(cpBundleAllocMap)
 }
 
-func APersistableBundle_putStringVector(pBundle *APersistableBundle, key string, vec *string, num int32) {
+func APersistableBundle_putStringVector(pBundle *APersistableBundle, key string, vec **int8, num int32) {
 	cpBundle, cpBundleAllocMap := (*C.APersistableBundle)(unsafe.Pointer(pBundle)), cgoAllocsUnknown
 	ckey, ckeyAllocMap := UnpackPCharString(key)
+	cvec, cvecAllocMap := (**C.char)(unsafe.Pointer(vec)), cgoAllocsUnknown
+	var pinnercvec runtime.Pinner
+	pinnercvec.Pin(vec)
+	if vec != nil {
+		pinnercvec.Pin(unsafe.Pointer(*vec))
+	}
+	defer pinnercvec.Unpin()
 	cnum, cnumAllocMap := (C.int)(num), cgoAllocsUnknown
-	C.APersistableBundle_putStringVector(cpBundle, ckey, (**C.char)(unsafe.Pointer(vec)), cnum)
+	C.APersistableBundle_putStringVector(cpBundle, ckey, cvec, cnum)
 	runtime.KeepAlive(cnumAllocMap)
+	runtime.KeepAlive(cvecAllocMap)
 	runtime.KeepAlive(ckeyAllocMap)
 	runtime.KeepAlive(cpBundleAllocMap)
 }

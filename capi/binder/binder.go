@@ -141,12 +141,20 @@ func AIBinder_decStrong(binder *AIBinder) {
 	runtime.KeepAlive(cbinderAllocMap)
 }
 
-func AIBinder_dump(binder *AIBinder, fd int32, args *string, numArgs uint32) Binder_status_t {
+func AIBinder_dump(binder *AIBinder, fd int32, args **int8, numArgs uint32) Binder_status_t {
 	cbinder, cbinderAllocMap := (*C.AIBinder)(unsafe.Pointer(binder)), cgoAllocsUnknown
 	cfd, cfdAllocMap := (C.int)(fd), cgoAllocsUnknown
+	cargs, cargsAllocMap := (**C.char)(unsafe.Pointer(args)), cgoAllocsUnknown
+	var pinnercargs runtime.Pinner
+	pinnercargs.Pin(args)
+	if args != nil {
+		pinnercargs.Pin(unsafe.Pointer(*args))
+	}
+	defer pinnercargs.Unpin()
 	cnumArgs, cnumArgsAllocMap := (C.uint)(numArgs), cgoAllocsUnknown
-	__ret := C.AIBinder_dump(cbinder, cfd, (**C.char)(unsafe.Pointer(args)), cnumArgs)
+	__ret := C.AIBinder_dump(cbinder, cfd, cargs, cnumArgs)
 	runtime.KeepAlive(cnumArgsAllocMap)
+	runtime.KeepAlive(cargsAllocMap)
 	runtime.KeepAlive(cfdAllocMap)
 	runtime.KeepAlive(cbinderAllocMap)
 	__v := (Binder_status_t)(__ret)

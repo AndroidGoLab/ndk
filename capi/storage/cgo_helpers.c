@@ -2,7 +2,7 @@
 
 #include "_cgo_export.h"
 
-void AStorageManager_obbCallbackFunc_a6785822(char* filename, int state, void* data) {
-	AStorageManager_obbCallbackFuncA6785822(filename, state, data);
+void AStorageManager_obbCallbackFunc_a6785822(const char* filename, const int32_t state, void* data) {
+	AStorageManager_obbCallbackFuncA6785822((char*)filename, state, data);
 }
 

@@ -10,8 +10,8 @@ void ACameraCaptureSession_captureCallback_failed_7ffeb49b(void* context, ACamer
 	ACameraCaptureSession_captureCallback_failed7FFEB49B(context, session, request, failure);
 }
 
-void ACameraCaptureSession_captureCallback_result_314ecd33(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ACameraMetadata* result) {
-	ACameraCaptureSession_captureCallback_result314ECD33(context, session, request, result);
+void ACameraCaptureSession_captureCallback_result_314ecd33(void* context, ACameraCaptureSession* session, ACaptureRequest* request, const ACameraMetadata* result) {
+	ACameraCaptureSession_captureCallback_result314ECD33(context, session, request, (ACameraMetadata*)result);
 }
 
 void ACameraCaptureSession_captureCallback_sequenceAbort_a6746d19(void* context, ACameraCaptureSession* session, int sequenceId) {
@@ -22,20 +22,20 @@ void ACameraCaptureSession_captureCallback_sequenceEnd_52945432(void* context, A
 	ACameraCaptureSession_captureCallback_sequenceEnd52945432(context, session, sequenceId, frameNumber);
 }
 
-void ACameraCaptureSession_captureCallback_start_fd7e5afc(void* context, ACameraCaptureSession* session, ACaptureRequest* request, int64_t timestamp) {
-	ACameraCaptureSession_captureCallback_startFD7E5AFC(context, session, request, timestamp);
+void ACameraCaptureSession_captureCallback_start_fd7e5afc(void* context, ACameraCaptureSession* session, const ACaptureRequest* request, int64_t timestamp) {
+	ACameraCaptureSession_captureCallback_startFD7E5AFC(context, session, (ACaptureRequest*)request, timestamp);
 }
 
-void ACameraCaptureSession_captureCallback_startV2_26e0bf9d(void* context, ACameraCaptureSession* session, ACaptureRequest* request, int64_t timestamp, int64_t frameNumber) {
-	ACameraCaptureSession_captureCallback_startV226E0BF9D(context, session, request, timestamp, frameNumber);
+void ACameraCaptureSession_captureCallback_startV2_26e0bf9d(void* context, ACameraCaptureSession* session, const ACaptureRequest* request, int64_t timestamp, int64_t frameNumber) {
+	ACameraCaptureSession_captureCallback_startV226E0BF9D(context, session, (ACaptureRequest*)request, timestamp, frameNumber);
 }
 
 void ACameraCaptureSession_logicalCamera_captureCallback_failed_47ed36f2(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ALogicalCameraCaptureFailure* failure) {
 	ACameraCaptureSession_logicalCamera_captureCallback_failed47ED36F2(context, session, request, failure);
 }
 
-void ACameraCaptureSession_logicalCamera_captureCallback_result_1bcff0f4(void* context, ACameraCaptureSession* session, ACaptureRequest* request, ACameraMetadata* result, uint64_t physicalResultCount, int8_t** physicalCameraIds, ACameraMetadata** physicalResults) {
-	ACameraCaptureSession_logicalCamera_captureCallback_result1BCFF0F4(context, session, request, result, physicalResultCount, physicalCameraIds, physicalResults);
+void ACameraCaptureSession_logicalCamera_captureCallback_result_1bcff0f4(void* context, ACameraCaptureSession* session, ACaptureRequest* request, const ACameraMetadata* result, size_t physicalResultCount, const char** physicalCameraIds, const ACameraMetadata** physicalResults) {
+	ACameraCaptureSession_logicalCamera_captureCallback_result1BCFF0F4(context, session, request, (ACameraMetadata*)result, physicalResultCount, (char**)physicalCameraIds, (ACameraMetadata**)physicalResults);
 }
 
 void ACameraCaptureSession_prepareCallback_c0ef58e6(void* context, ANativeWindow* window, ACameraCaptureSession* session) {
@@ -58,11 +58,11 @@ void ACameraManager_AccessPrioritiesChangedCallback_e0732dc5(void* context) {
 	ACameraManager_AccessPrioritiesChangedCallbackE0732DC5(context);
 }
 
-void ACameraManager_AvailabilityCallback_aab12960(void* context, char* cameraId) {
-	ACameraManager_AvailabilityCallbackAAB12960(context, cameraId);
+void ACameraManager_AvailabilityCallback_aab12960(void* context, const char* cameraId) {
+	ACameraManager_AvailabilityCallbackAAB12960(context, (char*)cameraId);
 }
 
-void ACameraManager_PhysicalCameraAvailabilityCallback_c6d28c7e(void* context, char* cameraId, char* physicalCameraId) {
-	ACameraManager_PhysicalCameraAvailabilityCallbackC6D28C7E(context, cameraId, physicalCameraId);
+void ACameraManager_PhysicalCameraAvailabilityCallback_c6d28c7e(void* context, const char* cameraId, const char* physicalCameraId) {
+	ACameraManager_PhysicalCameraAvailabilityCallbackC6D28C7E(context, (char*)cameraId, (char*)physicalCameraId);
 }
 

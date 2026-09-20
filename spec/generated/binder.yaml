@@ -222,8 +222,9 @@ functions:
             - name: fd
               type: int32
             - name: args
-              type: '*string'
-              direction: out
+              type: '**int8'
+              c_type: const char**
+              const: true
             - name: numArgs
               type: uint32
         returns: binder_status_t
@@ -955,23 +956,29 @@ callbacks:
         params:
             - name: args
               type: unsafe.Pointer
+              c_type: void*
         returns: unsafe.Pointer
     AIBinder_Class_onDestroy:
         params:
             - name: userData
               type: unsafe.Pointer
+              c_type: void*
         returns: ""
     AIBinder_Class_onTransact:
         params:
             - name: binder
               type: '*AIBinder'
+              c_type: AIBinder*
             - name: code
               type: transaction_code_t
+              c_type: transaction_code_t
             - name: in
               type: '*AParcel'
+              c_type: const AParcel*
               const: true
             - name: out
               type: '*AParcel'
+              c_type: AParcel*
         returns: binder_status_t
     AIBinder_DeathRecipient_onBinderDied:
         returns: ""
@@ -981,171 +988,227 @@ callbacks:
         params:
             - name: binder
               type: '*AIBinder'
+              c_type: AIBinder*
             - name: fd
               type: int32
+              c_type: int
             - name: args
               type: '**int8'
+              c_type: const char**
               const: true
             - name: numArgs
               type: uint32
+              c_type: uint32_t
         returns: binder_status_t
     AParcel_boolArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
         returns: bool
     AParcel_boolArrayGetter:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: const void*
               const: true
             - name: index
               type: uint64
+              c_type: size_t
         returns: bool
     AParcel_boolArraySetter:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: index
               type: uint64
+              c_type: size_t
             - name: value
               type: bool
+              c_type: bool
         returns: ""
     AParcel_byteArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**int8'
+              c_type: int8_t**
         returns: bool
     AParcel_charArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**char16_t'
+              c_type: char16_t**
         returns: bool
     AParcel_doubleArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**float64'
+              c_type: double**
         returns: bool
     AParcel_floatArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**float32'
+              c_type: float**
         returns: bool
     AParcel_int32ArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**int32'
+              c_type: int32_t**
         returns: bool
     AParcel_int64ArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**int64'
+              c_type: int64_t**
         returns: bool
     AParcel_parcelableArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
         returns: bool
     AParcel_readParcelableElement:
         params:
             - name: parcel
               type: '*AParcel'
+              c_type: const AParcel*
               const: true
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: index
               type: uint64
+              c_type: size_t
         returns: binder_status_t
     AParcel_stringAllocator:
         params:
             - name: stringData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: buffer
               type: '**int8'
+              c_type: char**
         returns: bool
     AParcel_stringArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
         returns: bool
     AParcel_stringArrayElementAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: index
               type: uint64
+              c_type: size_t
             - name: length
               type: int32
+              c_type: int32_t
             - name: buffer
               type: '**int8'
+              c_type: char**
         returns: bool
     AParcel_stringArrayElementGetter:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: const void*
               const: true
             - name: index
               type: uint64
+              c_type: size_t
             - name: outLength
               type: '*int32'
+              c_type: int32_t*
         returns: '*int8'
+        returns_c_type: const char*
     AParcel_uint32ArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**uint32'
+              c_type: uint32_t**
         returns: bool
     AParcel_uint64ArrayAllocator:
         params:
             - name: arrayData
               type: unsafe.Pointer
+              c_type: void*
             - name: length
               type: int32
+              c_type: int32_t
             - name: outBuffer
               type: '**uint64'
+              c_type: uint64_t**
         returns: bool
     AParcel_writeParcelableElement:
         params:
             - name: parcel
               type: '*AParcel'
+              c_type: AParcel*
             - name: arrayData
               type: unsafe.Pointer
+              c_type: const void*
               const: true
             - name: index
               type: uint64
+              c_type: size_t
         returns: binder_status_t

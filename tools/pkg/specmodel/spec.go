@@ -37,12 +37,14 @@ type FuncDef struct {
 type Param struct {
 	Name      string `yaml:"name"`
 	Type      string `yaml:"type"`
+	CType     string `yaml:"c_type,omitempty"`    // normalized C declarator (e.g. char**)
 	Direction string `yaml:"direction,omitempty"` // "out" for output params
 	Const     bool   `yaml:"const,omitempty"`     // true if param has const qualifier
 }
 
 // CallbackDef describes an extracted callback function type.
 type CallbackDef struct {
-	Params  []Param `yaml:"params,omitempty"`
-	Returns string  `yaml:"returns"`
+	Params       []Param `yaml:"params,omitempty"`
+	Returns      string  `yaml:"returns"`
+	ReturnsCType string  `yaml:"returns_c_type,omitempty"`
 }

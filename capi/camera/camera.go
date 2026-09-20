@@ -540,7 +540,7 @@ func ACameraMetadata_getConstEntry(metadata *ACameraMetadata, tag uint32, entry 
 	return __v
 }
 
-func ACameraMetadata_isLogicalMultiCamera(staticMetadata *ACameraMetadata, numPhysicalCameras *uint64, physicalCameraIds **string) bool {
+func ACameraMetadata_isLogicalMultiCamera(staticMetadata *ACameraMetadata, numPhysicalCameras *uint64, physicalCameraIds ***int8) bool {
 	cstaticMetadata, cstaticMetadataAllocMap := (*C.ACameraMetadata)(unsafe.Pointer(staticMetadata)), cgoAllocsUnknown
 	cnumPhysicalCameras, cnumPhysicalCamerasAllocMap := (*C.uint64_t)(unsafe.Pointer(numPhysicalCameras)), cgoAllocsUnknown
 	cphysicalCameraIds, cphysicalCameraIdsAllocMap := (***C.char)(unsafe.Pointer(physicalCameraIds)), cgoAllocsUnknown
@@ -548,6 +548,9 @@ func ACameraMetadata_isLogicalMultiCamera(staticMetadata *ACameraMetadata, numPh
 	pinnercphysicalCameraIds.Pin(physicalCameraIds)
 	if physicalCameraIds != nil {
 		pinnercphysicalCameraIds.Pin(unsafe.Pointer(*physicalCameraIds))
+		if *physicalCameraIds != nil {
+			pinnercphysicalCameraIds.Pin(unsafe.Pointer(**physicalCameraIds))
+		}
 	}
 	defer pinnercphysicalCameraIds.Unpin()
 	__ret := C.ACameraMetadata_isLogicalMultiCamera(cstaticMetadata, cnumPhysicalCameras, cphysicalCameraIds)

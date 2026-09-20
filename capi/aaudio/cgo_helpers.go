@@ -96,7 +96,7 @@ func NewAAudioStream_dataCallbackRef(ref unsafe.Pointer) *AAudioStream_dataCallb
 }
 
 //export AAudioStream_dataCallbackAEFF7E8C
-func AAudioStream_dataCallbackAEFF7E8C(cstream *C.AAudioStream, cuserData unsafe.Pointer, caudioData unsafe.Pointer, cnumFrames C.int) C.aaudio_data_callback_result_t {
+func AAudioStream_dataCallbackAEFF7E8C(cstream *C.AAudioStream, cuserData unsafe.Pointer, caudioData unsafe.Pointer, cnumFrames C.int32_t) C.aaudio_data_callback_result_t {
 	if aAudioStream_dataCallbackAEFF7E8CFunc != nil {
 		streamaeff7e8c := (*AAudioStream)(unsafe.Pointer(cstream))
 		userDataaeff7e8c := (unsafe.Pointer)(unsafe.Pointer(cuserData))

@@ -2,7 +2,7 @@
 
 #include "_cgo_export.h"
 
-aaudio_data_callback_result_t AAudioStream_dataCallback_aeff7e8c(AAudioStream* stream, void* userData, void* audioData, int numFrames) {
+aaudio_data_callback_result_t AAudioStream_dataCallback_aeff7e8c(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames) {
 	return AAudioStream_dataCallbackAEFF7E8C(stream, userData, audioData, numFrames);
 }
 

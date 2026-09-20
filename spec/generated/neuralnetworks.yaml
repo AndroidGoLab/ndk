@@ -165,8 +165,10 @@ functions:
             - name: device
               type: '*ANeuralNetworksDevice'
             - name: name
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
               direction: out
+              const: true
         returns: int32
     ANeuralNetworksDevice_getType:
         c_name: ANeuralNetworksDevice_getType
@@ -182,8 +184,10 @@ functions:
             - name: device
               type: '*ANeuralNetworksDevice'
             - name: version
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
               direction: out
+              const: true
         returns: int32
     ANeuralNetworksDevice_wait:
         c_name: ANeuralNetworksDevice_wait

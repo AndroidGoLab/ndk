@@ -281,7 +281,7 @@ func NewAIBinder_onDumpRef(ref unsafe.Pointer) *AIBinder_onDump {
 }
 
 //export AIBinder_onDump04709357
-func AIBinder_onDump04709357(cbinder *C.AIBinder, cfd C.int, cargs **C.int8_t, cnumArgs C.uint) C.binder_status_t {
+func AIBinder_onDump04709357(cbinder *C.AIBinder, cfd C.int, cargs **C.char, cnumArgs C.uint32_t) C.binder_status_t {
 	if aIBinder_onDump04709357Func != nil {
 		binder04709357 := (*AIBinder)(unsafe.Pointer(cbinder))
 		fd04709357 := (int32)(cfd)
@@ -321,7 +321,7 @@ func NewAParcel_boolArrayAllocatorRef(ref unsafe.Pointer) *AParcel_boolArrayAllo
 }
 
 //export AParcel_boolArrayAllocator6CE04D29
-func AParcel_boolArrayAllocator6CE04D29(carrayData unsafe.Pointer, clength C.int) C._Bool {
+func AParcel_boolArrayAllocator6CE04D29(carrayData unsafe.Pointer, clength C.int32_t) C._Bool {
 	if aParcel_boolArrayAllocator6CE04D29Func != nil {
 		arrayData6ce04d29 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		length6ce04d29 := (int32)(clength)
@@ -359,7 +359,7 @@ func NewAParcel_boolArrayGetterRef(ref unsafe.Pointer) *AParcel_boolArrayGetter 
 }
 
 //export AParcel_boolArrayGetter58F10D8E
-func AParcel_boolArrayGetter58F10D8E(carrayData unsafe.Pointer, cindex C.uint64_t) C._Bool {
+func AParcel_boolArrayGetter58F10D8E(carrayData unsafe.Pointer, cindex C.size_t) C._Bool {
 	if aParcel_boolArrayGetter58F10D8EFunc != nil {
 		arrayData58f10d8e := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		index58f10d8e := (uint64)(cindex)
@@ -397,7 +397,7 @@ func NewAParcel_boolArraySetterRef(ref unsafe.Pointer) *AParcel_boolArraySetter 
 }
 
 //export AParcel_boolArraySetterC31D06A6
-func AParcel_boolArraySetterC31D06A6(carrayData unsafe.Pointer, cindex C.uint64_t, cvalue C._Bool) {
+func AParcel_boolArraySetterC31D06A6(carrayData unsafe.Pointer, cindex C.size_t, cvalue C.bool) {
 	if aParcel_boolArraySetterC31D06A6Func != nil {
 		arrayDatac31d06a6 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		indexc31d06a6 := (uint64)(cindex)
@@ -435,7 +435,7 @@ func NewAParcel_byteArrayAllocatorRef(ref unsafe.Pointer) *AParcel_byteArrayAllo
 }
 
 //export AParcel_byteArrayAllocator0F5D9BCB
-func AParcel_byteArrayAllocator0F5D9BCB(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.int8_t) C._Bool {
+func AParcel_byteArrayAllocator0F5D9BCB(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.int8_t) C._Bool {
 	if aParcel_byteArrayAllocator0F5D9BCBFunc != nil {
 		arrayData0f5d9bcb := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		length0f5d9bcb := (int32)(clength)
@@ -474,7 +474,7 @@ func NewAParcel_charArrayAllocatorRef(ref unsafe.Pointer) *AParcel_charArrayAllo
 }
 
 //export AParcel_charArrayAllocatorE28A23C0
-func AParcel_charArrayAllocatorE28A23C0(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.char16_t) C._Bool {
+func AParcel_charArrayAllocatorE28A23C0(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.char16_t) C._Bool {
 	if aParcel_charArrayAllocatorE28A23C0Func != nil {
 		arrayDatae28a23c0 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		lengthe28a23c0 := (int32)(clength)
@@ -513,7 +513,7 @@ func NewAParcel_doubleArrayAllocatorRef(ref unsafe.Pointer) *AParcel_doubleArray
 }
 
 //export AParcel_doubleArrayAllocator0D8E072D
-func AParcel_doubleArrayAllocator0D8E072D(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.double) C._Bool {
+func AParcel_doubleArrayAllocator0D8E072D(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.double) C._Bool {
 	if aParcel_doubleArrayAllocator0D8E072DFunc != nil {
 		arrayData0d8e072d := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		length0d8e072d := (int32)(clength)
@@ -552,7 +552,7 @@ func NewAParcel_floatArrayAllocatorRef(ref unsafe.Pointer) *AParcel_floatArrayAl
 }
 
 //export AParcel_floatArrayAllocatorDDD314B6
-func AParcel_floatArrayAllocatorDDD314B6(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.float) C._Bool {
+func AParcel_floatArrayAllocatorDDD314B6(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.float) C._Bool {
 	if aParcel_floatArrayAllocatorDDD314B6Func != nil {
 		arrayDataddd314b6 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		lengthddd314b6 := (int32)(clength)
@@ -591,7 +591,7 @@ func NewAParcel_int32ArrayAllocatorRef(ref unsafe.Pointer) *AParcel_int32ArrayAl
 }
 
 //export AParcel_int32ArrayAllocator632DB075
-func AParcel_int32ArrayAllocator632DB075(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.int) C._Bool {
+func AParcel_int32ArrayAllocator632DB075(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.int32_t) C._Bool {
 	if aParcel_int32ArrayAllocator632DB075Func != nil {
 		arrayData632db075 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		length632db075 := (int32)(clength)
@@ -630,7 +630,7 @@ func NewAParcel_int64ArrayAllocatorRef(ref unsafe.Pointer) *AParcel_int64ArrayAl
 }
 
 //export AParcel_int64ArrayAllocatorE9CCD3BD
-func AParcel_int64ArrayAllocatorE9CCD3BD(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.int64_t) C._Bool {
+func AParcel_int64ArrayAllocatorE9CCD3BD(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.int64_t) C._Bool {
 	if aParcel_int64ArrayAllocatorE9CCD3BDFunc != nil {
 		arrayDatae9ccd3bd := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		lengthe9ccd3bd := (int32)(clength)
@@ -669,7 +669,7 @@ func NewAParcel_parcelableArrayAllocatorRef(ref unsafe.Pointer) *AParcel_parcela
 }
 
 //export AParcel_parcelableArrayAllocator6A96D230
-func AParcel_parcelableArrayAllocator6A96D230(carrayData unsafe.Pointer, clength C.int) C._Bool {
+func AParcel_parcelableArrayAllocator6A96D230(carrayData unsafe.Pointer, clength C.int32_t) C._Bool {
 	if aParcel_parcelableArrayAllocator6A96D230Func != nil {
 		arrayData6a96d230 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		length6a96d230 := (int32)(clength)
@@ -707,7 +707,7 @@ func NewAParcel_readParcelableElementRef(ref unsafe.Pointer) *AParcel_readParcel
 }
 
 //export AParcel_readParcelableElementF5964747
-func AParcel_readParcelableElementF5964747(cparcel *C.AParcel, carrayData unsafe.Pointer, cindex C.uint64_t) C.binder_status_t {
+func AParcel_readParcelableElementF5964747(cparcel *C.AParcel, carrayData unsafe.Pointer, cindex C.size_t) C.binder_status_t {
 	if aParcel_readParcelableElementF5964747Func != nil {
 		parcelf5964747 := (*AParcel)(unsafe.Pointer(cparcel))
 		arrayDataf5964747 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
@@ -746,7 +746,7 @@ func NewAParcel_stringAllocatorRef(ref unsafe.Pointer) *AParcel_stringAllocator 
 }
 
 //export AParcel_stringAllocatorFED8100A
-func AParcel_stringAllocatorFED8100A(cstringData unsafe.Pointer, clength C.int, cbuffer **C.int8_t) C._Bool {
+func AParcel_stringAllocatorFED8100A(cstringData unsafe.Pointer, clength C.int32_t, cbuffer **C.char) C._Bool {
 	if aParcel_stringAllocatorFED8100AFunc != nil {
 		stringDatafed8100a := (unsafe.Pointer)(unsafe.Pointer(cstringData))
 		lengthfed8100a := (int32)(clength)
@@ -785,7 +785,7 @@ func NewAParcel_stringArrayAllocatorRef(ref unsafe.Pointer) *AParcel_stringArray
 }
 
 //export AParcel_stringArrayAllocatorA431F501
-func AParcel_stringArrayAllocatorA431F501(carrayData unsafe.Pointer, clength C.int) C._Bool {
+func AParcel_stringArrayAllocatorA431F501(carrayData unsafe.Pointer, clength C.int32_t) C._Bool {
 	if aParcel_stringArrayAllocatorA431F501Func != nil {
 		arrayDataa431f501 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		lengtha431f501 := (int32)(clength)
@@ -823,7 +823,7 @@ func NewAParcel_stringArrayElementAllocatorRef(ref unsafe.Pointer) *AParcel_stri
 }
 
 //export AParcel_stringArrayElementAllocator9AC166CA
-func AParcel_stringArrayElementAllocator9AC166CA(carrayData unsafe.Pointer, cindex C.uint64_t, clength C.int, cbuffer **C.int8_t) C._Bool {
+func AParcel_stringArrayElementAllocator9AC166CA(carrayData unsafe.Pointer, cindex C.size_t, clength C.int32_t, cbuffer **C.char) C._Bool {
 	if aParcel_stringArrayElementAllocator9AC166CAFunc != nil {
 		arrayData9ac166ca := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		index9ac166ca := (uint64)(cindex)
@@ -863,13 +863,13 @@ func NewAParcel_stringArrayElementGetterRef(ref unsafe.Pointer) *AParcel_stringA
 }
 
 //export AParcel_stringArrayElementGetter6817B794
-func AParcel_stringArrayElementGetter6817B794(carrayData unsafe.Pointer, cindex C.uint64_t, coutLength *C.int) *C.int8_t {
+func AParcel_stringArrayElementGetter6817B794(carrayData unsafe.Pointer, cindex C.size_t, coutLength *C.int32_t) *C.char {
 	if aParcel_stringArrayElementGetter6817B794Func != nil {
 		arrayData6817b794 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		index6817b794 := (uint64)(cindex)
 		outLength6817b794 := (*int32)(unsafe.Pointer(coutLength))
 		ret6817b794 := aParcel_stringArrayElementGetter6817B794Func(arrayData6817b794, index6817b794, outLength6817b794)
-		ret, _ := (*C.int8_t)(ret6817b794), cgoAllocsUnknown
+		ret, _ := (*C.char)(unsafe.Pointer(ret6817b794)), cgoAllocsUnknown
 		return ret
 	}
 	panic("callback func has not been set (race?)")
@@ -902,7 +902,7 @@ func NewAParcel_uint32ArrayAllocatorRef(ref unsafe.Pointer) *AParcel_uint32Array
 }
 
 //export AParcel_uint32ArrayAllocatorDFFAD45C
-func AParcel_uint32ArrayAllocatorDFFAD45C(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.uint) C._Bool {
+func AParcel_uint32ArrayAllocatorDFFAD45C(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.uint32_t) C._Bool {
 	if aParcel_uint32ArrayAllocatorDFFAD45CFunc != nil {
 		arrayDatadffad45c := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		lengthdffad45c := (int32)(clength)
@@ -941,7 +941,7 @@ func NewAParcel_uint64ArrayAllocatorRef(ref unsafe.Pointer) *AParcel_uint64Array
 }
 
 //export AParcel_uint64ArrayAllocatorCF52B274
-func AParcel_uint64ArrayAllocatorCF52B274(carrayData unsafe.Pointer, clength C.int, coutBuffer **C.uint64_t) C._Bool {
+func AParcel_uint64ArrayAllocatorCF52B274(carrayData unsafe.Pointer, clength C.int32_t, coutBuffer **C.uint64_t) C._Bool {
 	if aParcel_uint64ArrayAllocatorCF52B274Func != nil {
 		arrayDatacf52b274 := (unsafe.Pointer)(unsafe.Pointer(carrayData))
 		lengthcf52b274 := (int32)(clength)
@@ -980,7 +980,7 @@ func NewAParcel_writeParcelableElementRef(ref unsafe.Pointer) *AParcel_writeParc
 }
 
 //export AParcel_writeParcelableElement73CCA07C
-func AParcel_writeParcelableElement73CCA07C(cparcel *C.AParcel, carrayData unsafe.Pointer, cindex C.uint64_t) C.binder_status_t {
+func AParcel_writeParcelableElement73CCA07C(cparcel *C.AParcel, carrayData unsafe.Pointer, cindex C.size_t) C.binder_status_t {
 	if aParcel_writeParcelableElement73CCA07CFunc != nil {
 		parcel73cca07c := (*AParcel)(unsafe.Pointer(cparcel))
 		arrayData73cca07c := (unsafe.Pointer)(unsafe.Pointer(carrayData))

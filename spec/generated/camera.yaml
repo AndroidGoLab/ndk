@@ -2347,8 +2347,10 @@ functions:
             - name: numPhysicalCameras
               type: '*uint64'
             - name: physicalCameraIds
-              type: '**string'
+              type: '***int8'
+              c_type: const char*const**
               direction: out
+              const: true
         returns: bool
     ACameraOutputTarget_create:
         c_name: ACameraOutputTarget_create
@@ -2685,169 +2687,225 @@ callbacks:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: ACaptureRequest*
             - name: window
               type: '*ANativeWindow'
+              c_type: ANativeWindow*
             - name: frameNumber
               type: int64
+              c_type: int64_t
         returns: ""
     ACameraCaptureSession_captureCallback_failed:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: ACaptureRequest*
             - name: failure
               type: '*ACameraCaptureFailure'
+              c_type: ACameraCaptureFailure*
         returns: ""
     ACameraCaptureSession_captureCallback_result:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: ACaptureRequest*
             - name: result
               type: '*ACameraMetadata'
+              c_type: const ACameraMetadata*
               const: true
         returns: ""
     ACameraCaptureSession_captureCallback_sequenceAbort:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: sequenceId
               type: int32
+              c_type: int
         returns: ""
     ACameraCaptureSession_captureCallback_sequenceEnd:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: sequenceId
               type: int32
+              c_type: int
             - name: frameNumber
               type: int64
+              c_type: int64_t
         returns: ""
     ACameraCaptureSession_captureCallback_start:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: const ACaptureRequest*
               const: true
             - name: timestamp
               type: int64
+              c_type: int64_t
         returns: ""
     ACameraCaptureSession_captureCallback_startV2:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: const ACaptureRequest*
               const: true
             - name: timestamp
               type: int64
+              c_type: int64_t
             - name: frameNumber
               type: int64
+              c_type: int64_t
         returns: ""
     ACameraCaptureSession_logicalCamera_captureCallback_failed:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: ACaptureRequest*
             - name: failure
               type: '*ALogicalCameraCaptureFailure'
+              c_type: ALogicalCameraCaptureFailure*
         returns: ""
     ACameraCaptureSession_logicalCamera_captureCallback_result:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
             - name: request
               type: '*ACaptureRequest'
+              c_type: ACaptureRequest*
             - name: result
               type: '*ACameraMetadata'
+              c_type: const ACameraMetadata*
               const: true
             - name: physicalResultCount
               type: uint64
+              c_type: size_t
             - name: physicalCameraIds
               type: '**int8'
+              c_type: const char**
               const: true
             - name: physicalResults
               type: '**ACameraMetadata'
+              c_type: const ACameraMetadata**
               const: true
         returns: ""
     ACameraCaptureSession_prepareCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: window
               type: '*ANativeWindow'
+              c_type: ANativeWindow*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
         returns: ""
     ACameraCaptureSession_stateCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: session
               type: '*ACameraCaptureSession'
+              c_type: ACameraCaptureSession*
         returns: ""
     ACameraDevice_ErrorStateCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: device
               type: '*ACameraDevice'
+              c_type: ACameraDevice*
             - name: _error
               type: int32
+              c_type: int
         returns: ""
     ACameraDevice_StateCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: device
               type: '*ACameraDevice'
+              c_type: ACameraDevice*
         returns: ""
     ACameraManager_AccessPrioritiesChangedCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
         returns: ""
     ACameraManager_AvailabilityCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: cameraId
               type: string
+              c_type: const char*
               const: true
         returns: ""
     ACameraManager_PhysicalCameraAvailabilityCallback:
         params:
             - name: context
               type: unsafe.Pointer
+              c_type: void*
             - name: cameraId
               type: string
+              c_type: const char*
               const: true
             - name: physicalCameraId
               type: string
+              c_type: const char*
               const: true
         returns: ""
 structs:
@@ -3267,7 +3325,8 @@ structs:
             - name: numCameras
               type: int32
             - name: cameraIds
-              type: '*string'
+              type: '**int8'
+              c_type: const char**
     ACameraManager_AvailabilityListener:
         fields:
             - name: context

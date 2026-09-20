@@ -7,8 +7,8 @@
 #define __CGOGEN 1
 
 // __android_aborter_function_6780bbf7 is a proxy for callback __android_aborter_function.
-void __android_aborter_function_6780bbf7(char* abort_message);
+void __android_aborter_function_6780bbf7(const char* abort_message);
 
 // __android_logger_function_cb93890b is a proxy for callback __android_logger_function.
-void __android_logger_function_cb93890b(struct __android_log_message* log_message);
+void __android_logger_function_cb93890b(const struct __android_log_message* log_message);
 

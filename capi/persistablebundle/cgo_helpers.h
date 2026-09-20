@@ -7,5 +7,4 @@
 #define __CGOGEN 1
 
 // APersistableBundle_stringAllocator_d22e9a69 is a proxy for callback APersistableBundle_stringAllocator.
-void APersistableBundle_stringAllocator_d22e9a69();
-
+char* APersistableBundle_stringAllocator_d22e9a69(int32_t sizeBytes, void* context);

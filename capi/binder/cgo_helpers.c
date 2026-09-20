@@ -10,8 +10,8 @@ void AIBinder_Class_onDestroy_2c719d10(void* userData) {
 	AIBinder_Class_onDestroy2C719D10(userData);
 }
 
-binder_status_t AIBinder_Class_onTransact_4c5b3f35(AIBinder* binder, transaction_code_t code, AParcel* in, AParcel* out) {
-	return AIBinder_Class_onTransact4C5B3F35(binder, code, in, out);
+binder_status_t AIBinder_Class_onTransact_4c5b3f35(AIBinder* binder, transaction_code_t code, const AParcel* in, AParcel* out) {
+	return AIBinder_Class_onTransact4C5B3F35(binder, code, (AParcel*)in, out);
 }
 
 void AIBinder_DeathRecipient_onBinderDied_7d6f4f1b() {
@@ -22,79 +22,78 @@ void AIBinder_DeathRecipient_onBinderUnlinked_6d499f91() {
 	AIBinder_DeathRecipient_onBinderUnlinked6D499F91();
 }
 
-binder_status_t AIBinder_onDump_04709357(AIBinder* binder, int fd, int8_t** args, unsigned int numArgs) {
-	return AIBinder_onDump04709357(binder, fd, args, numArgs);
+binder_status_t AIBinder_onDump_04709357(AIBinder* binder, int fd, const char** args, uint32_t numArgs) {
+	return AIBinder_onDump04709357(binder, fd, (char**)args, numArgs);
 }
 
-_Bool AParcel_boolArrayAllocator_6ce04d29(void* arrayData, int length) {
+_Bool AParcel_boolArrayAllocator_6ce04d29(void* arrayData, int32_t length) {
 	return AParcel_boolArrayAllocator6CE04D29(arrayData, length);
 }
 
-_Bool AParcel_boolArrayGetter_58f10d8e(void* arrayData, uint64_t index) {
-	return AParcel_boolArrayGetter58F10D8E(arrayData, index);
+_Bool AParcel_boolArrayGetter_58f10d8e(const void* arrayData, size_t index) {
+	return AParcel_boolArrayGetter58F10D8E((void*)arrayData, index);
 }
 
-void AParcel_boolArraySetter_c31d06a6(void* arrayData, uint64_t index, _Bool value) {
+void AParcel_boolArraySetter_c31d06a6(void* arrayData, size_t index, bool value) {
 	AParcel_boolArraySetterC31D06A6(arrayData, index, value);
 }
 
-_Bool AParcel_byteArrayAllocator_0f5d9bcb(void* arrayData, int length, int8_t** outBuffer) {
+_Bool AParcel_byteArrayAllocator_0f5d9bcb(void* arrayData, int32_t length, int8_t** outBuffer) {
 	return AParcel_byteArrayAllocator0F5D9BCB(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_charArrayAllocator_e28a23c0(void* arrayData, int length, char16_t** outBuffer) {
+_Bool AParcel_charArrayAllocator_e28a23c0(void* arrayData, int32_t length, char16_t** outBuffer) {
 	return AParcel_charArrayAllocatorE28A23C0(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_doubleArrayAllocator_0d8e072d(void* arrayData, int length, double** outBuffer) {
+_Bool AParcel_doubleArrayAllocator_0d8e072d(void* arrayData, int32_t length, double** outBuffer) {
 	return AParcel_doubleArrayAllocator0D8E072D(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_floatArrayAllocator_ddd314b6(void* arrayData, int length, float** outBuffer) {
+_Bool AParcel_floatArrayAllocator_ddd314b6(void* arrayData, int32_t length, float** outBuffer) {
 	return AParcel_floatArrayAllocatorDDD314B6(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_int32ArrayAllocator_632db075(void* arrayData, int length, int** outBuffer) {
+_Bool AParcel_int32ArrayAllocator_632db075(void* arrayData, int32_t length, int32_t** outBuffer) {
 	return AParcel_int32ArrayAllocator632DB075(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_int64ArrayAllocator_e9ccd3bd(void* arrayData, int length, int64_t** outBuffer) {
+_Bool AParcel_int64ArrayAllocator_e9ccd3bd(void* arrayData, int32_t length, int64_t** outBuffer) {
 	return AParcel_int64ArrayAllocatorE9CCD3BD(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_parcelableArrayAllocator_6a96d230(void* arrayData, int length) {
+_Bool AParcel_parcelableArrayAllocator_6a96d230(void* arrayData, int32_t length) {
 	return AParcel_parcelableArrayAllocator6A96D230(arrayData, length);
 }
 
-binder_status_t AParcel_readParcelableElement_f5964747(AParcel* parcel, void* arrayData, uint64_t index) {
-	return AParcel_readParcelableElementF5964747(parcel, arrayData, index);
+binder_status_t AParcel_readParcelableElement_f5964747(const AParcel* parcel, void* arrayData, size_t index) {
+	return AParcel_readParcelableElementF5964747((AParcel*)parcel, arrayData, index);
 }
 
-_Bool AParcel_stringAllocator_fed8100a(void* stringData, int length, int8_t** buffer) {
+_Bool AParcel_stringAllocator_fed8100a(void* stringData, int32_t length, char** buffer) {
 	return AParcel_stringAllocatorFED8100A(stringData, length, buffer);
 }
 
-_Bool AParcel_stringArrayAllocator_a431f501(void* arrayData, int length) {
+_Bool AParcel_stringArrayAllocator_a431f501(void* arrayData, int32_t length) {
 	return AParcel_stringArrayAllocatorA431F501(arrayData, length);
 }
 
-_Bool AParcel_stringArrayElementAllocator_9ac166ca(void* arrayData, uint64_t index, int length, int8_t** buffer) {
+_Bool AParcel_stringArrayElementAllocator_9ac166ca(void* arrayData, size_t index, int32_t length, char** buffer) {
 	return AParcel_stringArrayElementAllocator9AC166CA(arrayData, index, length, buffer);
 }
 
-int8_t* AParcel_stringArrayElementGetter_6817b794(void* arrayData, uint64_t index, int* outLength) {
-	return AParcel_stringArrayElementGetter6817B794(arrayData, index, outLength);
+const char* AParcel_stringArrayElementGetter_6817b794(const void* arrayData, size_t index, int32_t* outLength) {
+	return AParcel_stringArrayElementGetter6817B794((void*)arrayData, index, outLength);
 }
 
-_Bool AParcel_uint32ArrayAllocator_dffad45c(void* arrayData, int length, unsigned int** outBuffer) {
+_Bool AParcel_uint32ArrayAllocator_dffad45c(void* arrayData, int32_t length, uint32_t** outBuffer) {
 	return AParcel_uint32ArrayAllocatorDFFAD45C(arrayData, length, outBuffer);
 }
 
-_Bool AParcel_uint64ArrayAllocator_cf52b274(void* arrayData, int length, uint64_t** outBuffer) {
+_Bool AParcel_uint64ArrayAllocator_cf52b274(void* arrayData, int32_t length, uint64_t** outBuffer) {
 	return AParcel_uint64ArrayAllocatorCF52B274(arrayData, length, outBuffer);
 }
 
-binder_status_t AParcel_writeParcelableElement_73cca07c(AParcel* parcel, void* arrayData, uint64_t index) {
-	return AParcel_writeParcelableElement73CCA07C(parcel, arrayData, index);
+binder_status_t AParcel_writeParcelableElement_73cca07c(AParcel* parcel, const void* arrayData, size_t index) {
+	return AParcel_writeParcelableElement73CCA07C(parcel, (void*)arrayData, index);
 }
-

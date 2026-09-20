@@ -467,6 +467,66 @@ func TestCallbackProxy(t *testing.T) {
 	assert.True(t, hasExport)
 }
 
+func TestCallbackProxyPreservesExactCType(t *testing.T) {
+	spec := &specmodel.Spec{
+		Types: map[string]specmodel.TypeDef{
+			"AThing": {Kind: "opaque_ptr", CType: "AThing"},
+		},
+		Callbacks: map[string]specmodel.CallbackDef{
+			"TestCallback": {
+				Params: []specmodel.Param{
+					{Name: "names", Type: "**int8", CType: "const char**", Const: true},
+					{Name: "thing", Type: "*AThing", CType: "const AThing*", Const: true},
+					{Name: "count", Type: "int32", CType: "int32_t"},
+				},
+			},
+		},
+	}
+	manifest := &Manifest{}
+	manifest.Generator.Includes = []string{"test.h"}
+
+	proxy := generateCallbackProxy("test", "TestCallback", spec.Callbacks["TestCallback"], spec, nil)
+	assert.Contains(t, proxy, "cnames **C.char")
+	assert.Contains(t, proxy, "cthing *C.AThing")
+	assert.Contains(t, proxy, "ccount C.int32_t")
+
+	header := generateCgoHelpersH("test", manifest, spec, nil)
+	assert.Contains(t, header, "const char** names")
+	assert.Contains(t, header, "const AThing* thing")
+	assert.Contains(t, header, "int32_t count")
+
+	implementation := generateCgoHelpersC("test", spec, nil)
+	assert.Contains(t, implementation, "(char**)names")
+	assert.Contains(t, implementation, "(AThing*)thing")
+}
+
+func TestCallbackProxyPreservesReturnCType(t *testing.T) {
+	spec := &specmodel.Spec{
+		Callbacks: map[string]specmodel.CallbackDef{
+			"StringCallback": {
+				Params: []specmodel.Param{
+					{Name: "value", Type: "int32", CType: "int32_t"},
+				},
+				Returns:      "*int8",
+				ReturnsCType: "const char*",
+			},
+		},
+	}
+	manifest := &Manifest{}
+	manifest.Generator.Includes = []string{"test.h"}
+
+	proxy := generateCallbackProxy("test", "StringCallback", spec.Callbacks["StringCallback"], spec, nil)
+	assert.Contains(t, proxy, "*C.char")
+	assert.Contains(t, proxy, "unsafe.Pointer(ret")
+
+	header := generateCgoHelpersH("test", manifest, spec, nil)
+	assert.Contains(t, header, "const char* StringCallback")
+
+	implementation := generateCgoHelpersC("test", spec, nil)
+	assert.Contains(t, implementation, "const char* StringCallback")
+	assert.Contains(t, implementation, "return StringCallback")
+}
+
 func TestParamConversionOpaque(t *testing.T) {
 	spec := looperSpec()
 	callbackSet := map[string]bool{"ALooper_callbackFunc": true}
@@ -544,6 +604,50 @@ func TestParamConversionMultiLevelPointerScalar(t *testing.T) {
 	assert.Contains(t, conv.code, "runtime.Pinner")
 	assert.Contains(t, conv.code, "Pin(data)")
 	assert.Contains(t, conv.code, "(**C.uint8_t)(unsafe.Pointer(data))")
+}
+
+func TestParamConversionMultiLevelPointerChar(t *testing.T) {
+	spec := looperSpec()
+	callbackSet := map[string]bool{}
+
+	p := specmodel.Param{Name: "data", Type: "**int8"}
+	conv := paramConversion(p, spec, callbackSet, nil)
+
+	assert.Contains(t, conv.code, "(**C.int8_t)(unsafe.Pointer(data))")
+}
+
+func TestParamConversionMultiLevelPointerPreservesCBase(t *testing.T) {
+	tests := []struct {
+		name   string
+		cType  string
+		goType string
+		want   string
+	}{
+		{name: "char", cType: "char**", goType: "**int8", want: "(**C.char)(unsafe.Pointer(data))"},
+		{name: "signed char", cType: "signed char**", goType: "**int8", want: "(**C.schar)(unsafe.Pointer(data))"},
+		{name: "int8_t", cType: "int8_t**", goType: "**int8", want: "(**C.int8_t)(unsafe.Pointer(data))"},
+		{name: "char triple pointer", cType: "char***", goType: "***int8", want: "(***C.char)(unsafe.Pointer(data))"},
+		{name: "qualified char triple pointer", cType: "const char*const**", goType: "***int8", want: "(***C.char)(unsafe.Pointer(data))"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			conv := paramConversion(specmodel.Param{
+				Name: "data", Type: tt.goType, CType: tt.cType,
+			}, looperSpec(), map[string]bool{}, nil)
+			assert.Contains(t, conv.code, tt.want)
+		})
+	}
+}
+
+func TestParamConversionTriplePointerPinsNestedPointers(t *testing.T) {
+	conv := paramConversion(specmodel.Param{
+		Name: "data", Type: "***int8", CType: "char***",
+	}, looperSpec(), map[string]bool{}, nil)
+
+	assert.Contains(t, conv.code, "if data != nil")
+	assert.Contains(t, conv.code, "if *data != nil")
+	assert.Contains(t, conv.code, "Pin(unsafe.Pointer(*data))")
+	assert.Contains(t, conv.code, "Pin(unsafe.Pointer(**data))")
 }
 
 func TestReturnConversionPointer(t *testing.T) {

@@ -803,21 +803,28 @@ callbacks:
         params:
             - name: stream
               type: '*AAudioStream'
+              c_type: AAudioStream*
             - name: userData
               type: unsafe.Pointer
+              c_type: void*
             - name: audioData
               type: unsafe.Pointer
+              c_type: void*
             - name: numFrames
               type: int32
+              c_type: int32_t
         returns: aaudio_data_callback_result_t
     AAudioStream_errorCallback:
         params:
             - name: stream
               type: '*AAudioStream'
+              c_type: AAudioStream*
             - name: userData
               type: unsafe.Pointer
+              c_type: void*
             - name: _error
               type: aaudio_result_t
+              c_type: aaudio_result_t
         returns: ""
 macros:
     AAUDIO_SYSTEM_USAGE_OFFSET: 1000

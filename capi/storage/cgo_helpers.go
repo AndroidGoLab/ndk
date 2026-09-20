@@ -96,7 +96,7 @@ func NewAStorageManager_obbCallbackFuncRef(ref unsafe.Pointer) *AStorageManager_
 }
 
 //export AStorageManager_obbCallbackFuncA6785822
-func AStorageManager_obbCallbackFuncA6785822(cfilename *C.char, cstate C.int, cdata unsafe.Pointer) {
+func AStorageManager_obbCallbackFuncA6785822(cfilename *C.char, cstate C.int32_t, cdata unsafe.Pointer) {
 	if aStorageManager_obbCallbackFuncA6785822Func != nil {
 		filenamea6785822 := C.GoString(cfilename)
 		statea6785822 := (int32)(cstate)

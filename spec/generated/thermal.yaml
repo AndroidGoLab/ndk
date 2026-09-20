@@ -93,8 +93,10 @@ callbacks:
         params:
             - name: data
               type: unsafe.Pointer
+              c_type: void*
             - name: status
               type: AThermalStatus
+              c_type: AThermalStatus
         returns: ""
 structs:
     AThermalHeadroomThreshold:

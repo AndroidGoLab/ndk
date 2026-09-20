@@ -22,16 +22,16 @@ void AImageReader_BufferRemovedCallback_b28d8959(void* context, AImageReader* re
 void AImageReader_ImageCallback_32cdd235(void* context, AImageReader* reader);
 
 // AMediaCodecOnAsyncError_f1342a37 is a proxy for callback AMediaCodecOnAsyncError.
-void AMediaCodecOnAsyncError_f1342a37(AMediaCodec* codec, void* userdata, media_status_t _error, int actionCode, char* detail);
+void AMediaCodecOnAsyncError_f1342a37(AMediaCodec* codec, void* userdata, media_status_t _error, int32_t actionCode, const char* detail);
 
 // AMediaCodecOnAsyncFormatChanged_3dabd828 is a proxy for callback AMediaCodecOnAsyncFormatChanged.
 void AMediaCodecOnAsyncFormatChanged_3dabd828(AMediaCodec* codec, void* userdata, AMediaFormat* format);
 
 // AMediaCodecOnAsyncInputAvailable_2f5096c4 is a proxy for callback AMediaCodecOnAsyncInputAvailable.
-void AMediaCodecOnAsyncInputAvailable_2f5096c4(AMediaCodec* codec, void* userdata, int index);
+void AMediaCodecOnAsyncInputAvailable_2f5096c4(AMediaCodec* codec, void* userdata, int32_t index);
 
 // AMediaCodecOnAsyncOutputAvailable_f41b4c39 is a proxy for callback AMediaCodecOnAsyncOutputAvailable.
-void AMediaCodecOnAsyncOutputAvailable_f41b4c39(AMediaCodec* codec, void* userdata, int index, AMediaCodecBufferInfo* bufferInfo);
+void AMediaCodecOnAsyncOutputAvailable_f41b4c39(AMediaCodec* codec, void* userdata, int32_t index, AMediaCodecBufferInfo* bufferInfo);
 
 // AMediaCodecOnFrameRendered_61af0881 is a proxy for callback AMediaCodecOnFrameRendered.
 void AMediaCodecOnFrameRendered_61af0881(AMediaCodec* codec, void* userdata, int64_t mediaTimeUs, int64_t systemNano);
@@ -46,14 +46,14 @@ int64_t AMediaDataSourceGetAvailableSize_40cc3318(void* userdata, off64_t offset
 int64_t AMediaDataSourceGetSize_e0220813(void* userdata);
 
 // AMediaDataSourceReadAt_865c1a4b is a proxy for callback AMediaDataSourceReadAt.
-int64_t AMediaDataSourceReadAt_865c1a4b(void* userdata, off64_t offset, void* buffer, uint64_t size);
+int64_t AMediaDataSourceReadAt_865c1a4b(void* userdata, off64_t offset, void* buffer, size_t size);
 
 // AMediaDrmEventListener_76bb5445 is a proxy for callback AMediaDrmEventListener.
-void AMediaDrmEventListener_76bb5445(AMediaDrm* p0, AMediaDrmSessionId* sessionId, AMediaDrmEventType eventType, int extra, uint8_t* data, uint64_t dataSize);
+void AMediaDrmEventListener_76bb5445(AMediaDrm* p0, const AMediaDrmSessionId* sessionId, AMediaDrmEventType eventType, int extra, const uint8_t* data, size_t dataSize);
 
 // AMediaDrmExpirationUpdateListener_ec3b27d6 is a proxy for callback AMediaDrmExpirationUpdateListener.
-void AMediaDrmExpirationUpdateListener_ec3b27d6(AMediaDrm* p0, AMediaDrmSessionId* sessionId, int64_t expiryTimeInMS);
+void AMediaDrmExpirationUpdateListener_ec3b27d6(AMediaDrm* p0, const AMediaDrmSessionId* sessionId, int64_t expiryTimeInMS);
 
 // AMediaDrmKeysChangeListener_fd05e34a is a proxy for callback AMediaDrmKeysChangeListener.
-void AMediaDrmKeysChangeListener_fd05e34a(AMediaDrm* p0, AMediaDrmSessionId* sessionId, AMediaDrmKeyStatus* keyStatus, uint64_t numKeys, _Bool hasNewUsableKey);
+void AMediaDrmKeysChangeListener_fd05e34a(AMediaDrm* p0, const AMediaDrmSessionId* sessionId, const AMediaDrmKeyStatus* keyStatus, size_t numKeys, bool hasNewUsableKey);
 

@@ -101,8 +101,11 @@ callbacks:
         params:
             - name: fd
               type: int32
+              c_type: int
             - name: events
               type: int32
+              c_type: int
             - name: data
               type: unsafe.Pointer
+              c_type: void*
         returns: int32

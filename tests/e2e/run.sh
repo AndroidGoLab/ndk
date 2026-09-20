@@ -21,10 +21,16 @@ AVD_NAME="${AVD_NAME:-ndk_e2e}"
 SYSTEM_IMAGE="system-images;android-${API_LEVEL};google_apis;x86_64"
 
 NDK="${ANDROID_HOME}/ndk/${NDK_VERSION}"
+NDK_SYSROOT="${NDK}/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 CC="${NDK}/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${API_LEVEL}-clang"
 ADB="${ANDROID_HOME}/platform-tools/adb"
 EMULATOR="${ANDROID_HOME}/emulator/emulator"
 AVDMANAGER="${ANDROID_HOME}/cmdline-tools/latest/bin/avdmanager"
+# adb starts a separate shell, so the host's GODEBUG does not propagate.
+REMOTE_GODEBUG="${GODEBUG:-cgocheck=1}"
+export CGO_CFLAGS="${CGO_CFLAGS:+$CGO_CFLAGS }--sysroot=$NDK_SYSROOT"
+export CGO_CPPFLAGS="${CGO_CPPFLAGS:+$CGO_CPPFLAGS }--sysroot=$NDK_SYSROOT"
+export CGO_LDFLAGS="${CGO_LDFLAGS:+$CGO_LDFLAGS }--sysroot=$NDK_SYSROOT"
 
 # Verify prerequisites
 for tool in "$CC" "$ADB" "$EMULATOR"; do
@@ -69,7 +75,7 @@ done
 echo "=== Step 4: Run E2E test ==="
 "$ADB" push tests/e2e/e2e_test /data/local/tmp/
 "$ADB" shell chmod 755 /data/local/tmp/e2e_test
-"$ADB" shell /data/local/tmp/e2e_test
+"$ADB" shell "GODEBUG=$REMOTE_GODEBUG /data/local/tmp/e2e_test"
 EXIT_CODE=$?
 
 echo "=== Step 5: Verify logcat ==="

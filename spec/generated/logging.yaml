@@ -167,12 +167,14 @@ callbacks:
         params:
             - name: abort_message
               type: string
+              c_type: const char*
               const: true
         returns: ""
     __android_logger_function:
         params:
             - name: log_message
               type: '*__android_log_message'
+              c_type: const struct __android_log_message*
               const: true
         returns: ""
 structs:

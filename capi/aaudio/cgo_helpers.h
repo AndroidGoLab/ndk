@@ -7,7 +7,7 @@
 #define __CGOGEN 1
 
 // AAudioStream_dataCallback_aeff7e8c is a proxy for callback AAudioStream_dataCallback.
-aaudio_data_callback_result_t AAudioStream_dataCallback_aeff7e8c(AAudioStream* stream, void* userData, void* audioData, int numFrames);
+aaudio_data_callback_result_t AAudioStream_dataCallback_aeff7e8c(AAudioStream* stream, void* userData, void* audioData, int32_t numFrames);
 
 // AAudioStream_errorCallback_272a051c is a proxy for callback AAudioStream_errorCallback.
 void AAudioStream_errorCallback_272a051c(AAudioStream* stream, void* userData, aaudio_result_t _error);

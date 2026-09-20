@@ -193,9 +193,14 @@ func addFunction(spec *specmodel.Spec, d *Declaration) {
 		if isOutputParam(&p.Type) {
 			dir = "out"
 		}
+		cType := ""
+		if needsCTypeMetadata(&p.Type) {
+			cType = typeRefToCType(&p.Type)
+		}
 		fd.Params = append(fd.Params, specmodel.Param{
 			Name:      p.Name,
 			Type:      goType,
+			CType:     cType,
 			Direction: dir,
 		})
 	}
@@ -349,6 +354,9 @@ func addStruct(spec *specmodel.Spec, d *Declaration) {
 			sf.Fields = convertInlineAggregateFields(f.Type.Fields)
 		} else {
 			sf.Type = typeRefToGoType(f.Type)
+			if needsCTypeMetadata(f.Type) {
+				sf.CType = typeRefToCType(f.Type)
+			}
 		}
 
 		sd.Fields = append(sd.Fields, sf)
@@ -388,6 +396,9 @@ func convertInlineAggregateFields(fields []Field) []specmodel.StructField {
 			sf.Fields = convertInlineAggregateFields(f.Type.Fields)
 		} else {
 			sf.Type = typeRefToGoType(f.Type)
+			if needsCTypeMetadata(f.Type) {
+				sf.CType = typeRefToCType(f.Type)
+			}
 		}
 		result = append(result, sf)
 	}
@@ -433,8 +444,11 @@ func typeRefToGoType(t *TypeRef) string {
 		if t.Type.Tag == ":void" {
 			return "unsafe.Pointer"
 		}
-		if t.Type.Tag == ":char" || t.Type.Tag == ":signed-char" {
+		if isCharTypeRef(t.Type) {
 			return "string"
+		}
+		if pointerDepth(t) > 1 && isCharTypeRef(pointerBaseType(t)) {
+			return strings.Repeat("*", pointerDepth(t)) + "int8"
 		}
 		inner := typeRefToGoType(t.Type)
 		return "*" + inner
@@ -460,6 +474,107 @@ func typeRefToGoType(t *TypeRef) string {
 
 	// Named type reference (typedef name like "ALooper", "int32_t", "camera_status_t").
 	return resolveTypedefName(t.Tag)
+}
+
+// typeRefToCType returns the normalized C spelling represented by a c2ffi
+// type. It is retained in function parameters where Go's type system loses
+// the distinction between char, signed char, and int8_t.
+func typeRefToCType(t *TypeRef) string {
+	if t == nil {
+		return ""
+	}
+
+	switch t.Tag {
+	case ":void":
+		return "void"
+	case ":char":
+		return "char"
+	case ":signed-char":
+		return "signed char"
+	case ":unsigned-char":
+		return "unsigned char"
+	case ":int":
+		return "int"
+	case ":unsigned-int":
+		return "unsigned int"
+	case ":long":
+		return "long"
+	case ":unsigned-long":
+		return "unsigned long"
+	case ":short":
+		return "short"
+	case ":unsigned-short":
+		return "unsigned short"
+	case ":float":
+		return "float"
+	case ":double":
+		return "double"
+	case ":_Bool":
+		return "_Bool"
+	case ":pointer":
+		if t.Type == nil {
+			return "void*"
+		}
+		inner := typeRefToCType(t.Type)
+		if inner == "" {
+			inner = "void"
+		}
+		return inner + "*"
+	case ":array":
+		inner := typeRefToCType(t.Type)
+		if t.Size > 0 {
+			return fmt.Sprintf("%s[%d]", inner, t.Size)
+		}
+		return inner + "[]"
+	case ":function-pointer":
+		return "function-pointer"
+	case ":enum", ":struct", "struct", ":union", "union":
+		if t.Name != "" {
+			return t.Name
+		}
+		return t.Tag
+	default:
+		return t.Tag
+	}
+}
+
+func isCharTypeRef(t *TypeRef) bool {
+	if t == nil {
+		return false
+	}
+	return t.Tag == ":char" || t.Tag == ":signed-char"
+}
+
+func pointerBaseType(t *TypeRef) *TypeRef {
+	for t != nil && t.Tag == ":pointer" {
+		t = t.Type
+	}
+	return t
+}
+
+func pointerDepth(t *TypeRef) int {
+	depth := 0
+	for t != nil && t.Tag == ":pointer" {
+		depth++
+		t = t.Type
+	}
+	return depth
+}
+
+func needsCTypeMetadata(t *TypeRef) bool {
+	if pointerDepth(t) < 2 {
+		return false
+	}
+	base := pointerBaseType(t)
+	if base == nil {
+		return false
+	}
+	switch base.Tag {
+	case ":char", ":signed-char", ":unsigned-char", "int8_t", "uint8_t":
+		return true
+	default:
+		return false
+	}
 }
 
 // resolveTypedefName converts a C typedef name to its Go equivalent.

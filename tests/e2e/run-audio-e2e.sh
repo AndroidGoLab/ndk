@@ -29,6 +29,7 @@ if [ -z "$NDK_PATH" ] || [ ! -d "$NDK_PATH" ]; then
 fi
 
 API_LEVEL="${API_LEVEL:-35}"
+NDK_SYSROOT="${NDK_PATH}/toolchains/llvm/prebuilt/linux-x86_64/sysroot"
 CC="${NDK_PATH}/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${API_LEVEL}-clang"
 if [ ! -x "$CC" ]; then
     echo "ERROR: NDK clang not found at $CC"
@@ -36,6 +37,11 @@ if [ ! -x "$CC" ]; then
 fi
 
 ADB="${ADB:-adb}"
+# adb starts a separate shell, so the host's GODEBUG does not propagate.
+REMOTE_GODEBUG="${GODEBUG:-cgocheck=1}"
+export CGO_CFLAGS="${CGO_CFLAGS:+$CGO_CFLAGS }--sysroot=$NDK_SYSROOT"
+export CGO_CPPFLAGS="${CGO_CPPFLAGS:+$CGO_CPPFLAGS }--sysroot=$NDK_SYSROOT"
+export CGO_LDFLAGS="${CGO_LDFLAGS:+$CGO_LDFLAGS }--sysroot=$NDK_SYSROOT"
 
 # Verify adb connectivity.
 if ! "$ADB" get-state >/dev/null 2>&1; then
@@ -111,7 +117,7 @@ echo "=== Running audio recording E2E on device ==="
 "$ADB" shell chmod 755 /data/local/tmp/audio-recording-e2e
 
 # shellcheck disable=SC2086
-OUTPUT=$("$ADB" shell "timeout 15 /data/local/tmp/audio-recording-e2e $DETECT_TONE 2>&1; echo EXIT=\$?" 2>&1)
+OUTPUT=$("$ADB" shell "GODEBUG=$REMOTE_GODEBUG timeout 15 /data/local/tmp/audio-recording-e2e $DETECT_TONE 2>&1; echo EXIT=\$?" 2>&1)
 echo "$OUTPUT"
 
 EXIT_CODE=$(echo "$OUTPUT" | grep -oP 'EXIT=\K\d+' | tail -1)

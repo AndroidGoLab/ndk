@@ -95,7 +95,7 @@ func NewAChoreographer_frameCallbackRef(ref unsafe.Pointer) *AChoreographer_fram
 }
 
 //export AChoreographer_frameCallbackB2A0E09C
-func AChoreographer_frameCallbackB2A0E09C(cframeTimeNanos C.int64_t, cdata unsafe.Pointer) {
+func AChoreographer_frameCallbackB2A0E09C(cframeTimeNanos C.long, cdata unsafe.Pointer) {
 	if aChoreographer_frameCallbackB2A0E09CFunc != nil {
 		frameTimeNanosb2a0e09c := (int64)(cframeTimeNanos)
 		datab2a0e09c := (unsafe.Pointer)(unsafe.Pointer(cdata))

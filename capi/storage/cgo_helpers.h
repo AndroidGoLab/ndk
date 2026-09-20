@@ -7,5 +7,5 @@
 #define __CGOGEN 1
 
 // AStorageManager_obbCallbackFunc_a6785822 is a proxy for callback AStorageManager_obbCallbackFunc.
-void AStorageManager_obbCallbackFunc_a6785822(char* filename, int state, void* data);
+void AStorageManager_obbCallbackFunc_a6785822(const char* filename, const int32_t state, void* data);
 

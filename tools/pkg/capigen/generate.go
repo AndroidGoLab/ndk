@@ -765,12 +765,12 @@ func generateCallbackProxy(
 		if pName == "" {
 			pName = fmt.Sprintf("p%d", i)
 		}
-		cgoType := applyCGoStructPrefix(goTypeToCGoCallbackParam(p.Type), structPrefixSet)
+		cgoType := goTypeToCGoCallbackParamWithCType(p.Type, p.CType, structPrefixSet)
 		fmt.Fprintf(&sb, "c%s %s", pName, cgoType)
 	}
 	sb.WriteString(")")
 
-	retCgoType := applyCGoStructPrefix(goTypeToCGoCallbackParam(cb.Returns), structPrefixSet)
+	retCgoType := goTypeToCGoCallbackReturnWithCType(cb.Returns, cb.ReturnsCType, structPrefixSet)
 	if retCgoType != "" {
 		fmt.Fprintf(&sb, " %s", retCgoType)
 	}
@@ -795,6 +795,9 @@ func generateCallbackProxy(
 	if cb.Returns != "" {
 		fmt.Fprintf(&sb, "\t\tret%s := %s\n", lowerHash, callExpr)
 		retConv := goToCGoReturn("ret"+lowerHash, cb.Returns)
+		if cb.ReturnsCType != "" {
+			retConv = goToCGoReturnWithCType("ret"+lowerHash, cb.Returns, cb.ReturnsCType, structPrefixSet)
+		}
 		fmt.Fprintf(&sb, "\t\tret, _ := %s, cgoAllocsUnknown\n", retConv)
 		sb.WriteString("\t\treturn ret\n")
 	} else {
@@ -834,7 +837,7 @@ func generateCgoHelpersH(
 		lowerHash := strings.ToLower(hash)
 		proxyCName := name + "_" + lowerHash
 
-		cRetType := goTypeToCHeaderTypeWithStructPrefix(cb.Returns, structPrefixSet)
+		cRetType := goTypeToCHeaderCallbackReturn(cb.Returns, cb.ReturnsCType, structPrefixSet)
 
 		fmt.Fprintf(&sb, "// %s is a proxy for callback %s.\n", proxyCName, name)
 		fmt.Fprintf(&sb, "%s %s(", cRetType, proxyCName)
@@ -847,7 +850,7 @@ func generateCgoHelpersH(
 			if pName == "" {
 				pName = fmt.Sprintf("p%d", i)
 			}
-			cType := goTypeToCHeaderTypeWithStructPrefix(p.Type, structPrefixSet)
+			cType := goTypeToCHeaderCallbackParam(p.Type, p.CType, structPrefixSet)
 			fmt.Fprintf(&sb, "%s %s", cType, pName)
 		}
 		sb.WriteString(");\n\n")
@@ -876,7 +879,7 @@ func generateCgoHelpersC(pkgName string, spec *specmodel.Spec, structPrefixSet m
 		proxyCName := name + "_" + lowerHash
 		goExportName := ExportName(name) + upperHash
 
-		cRetType := goTypeToCHeaderTypeWithStructPrefix(cb.Returns, structPrefixSet)
+		cRetType := goTypeToCHeaderCallbackReturn(cb.Returns, cb.ReturnsCType, structPrefixSet)
 
 		fmt.Fprintf(&sb, "%s %s(", cRetType, proxyCName)
 
@@ -889,9 +892,9 @@ func generateCgoHelpersC(pkgName string, spec *specmodel.Spec, structPrefixSet m
 			if pName == "" {
 				pName = fmt.Sprintf("p%d", i)
 			}
-			cType := goTypeToCHeaderTypeWithStructPrefix(p.Type, structPrefixSet)
+			cType := goTypeToCHeaderCallbackParam(p.Type, p.CType, structPrefixSet)
 			fmt.Fprintf(&sb, "%s %s", cType, pName)
-			paramNames = append(paramNames, pName)
+			paramNames = append(paramNames, callbackExportArg(p, pName))
 		}
 		sb.WriteString(") {\n")
 
@@ -905,6 +908,15 @@ func generateCgoHelpersC(pkgName string, spec *specmodel.Spec, structPrefixSet m
 	}
 
 	return sb.String()
+}
+
+// callbackExportArg casts qualified pointer parameters to the non-const CGo
+// export signature emitted for the generated Go callback proxy.
+func callbackExportArg(p specmodel.Param, name string) string {
+	if p.CType == "" || !strings.Contains(p.CType, "*") || !strings.Contains(p.CType, "const") {
+		return name
+	}
+	return fmt.Sprintf("(%s)%s", cTypeWithoutQualifiers(p.CType), name)
 }
 
 // generateFunctionsGo generates the {module}.go file with function wrappers.
@@ -1129,6 +1141,9 @@ func paramConversion(
 			cgoTypeExpr = fmt.Sprintf("%s*C.char", starStr)
 		case isScalarGoType(base):
 			cgoBase := goTypeToCGoExactType(base)
+			if exactBase := cgoBaseTypeFromCType(p.CType, stars); exactBase != "" {
+				cgoBase = exactBase
+			}
 			cgoTypeExpr = fmt.Sprintf("%s%s", starStr, cgoBase)
 		case structPrefixSet[base]:
 			cgoTypeExpr = fmt.Sprintf("%sC.struct_%s", starStr, base)
@@ -1140,13 +1155,19 @@ func paramConversion(
 		code := fmt.Sprintf("\t%s, %s := (%s)(unsafe.Pointer(%s)), cgoAllocsUnknown\n",
 			cVar, allocVar, cgoTypeExpr, p.Name)
 		code += fmt.Sprintf("\tvar %s runtime.Pinner\n", pinnerName)
+		// Pin each reachable pointer-valued object. A nested pointer can contain
+		// another Go pointer at every level, all of which must remain pinned
+		// while C is using the pointer chain.
 		code += fmt.Sprintf("\t%s.Pin(%s)\n", pinnerName, p.Name)
-		// For **, also pin the inner pointer value to satisfy CGo's check
-		// that Go memory must not contain unpinned Go pointers.
-		if stars == 2 {
-			code += fmt.Sprintf("\tif %s != nil {\n", p.Name)
-			code += fmt.Sprintf("\t\t%s.Pin(unsafe.Pointer(*%s))\n", pinnerName, p.Name)
-			code += "\t}\n"
+		for level := 1; level < stars; level++ {
+			indent := strings.Repeat("\t", level)
+			condition := strings.Repeat("*", level-1) + p.Name
+			deref := strings.Repeat("*", level) + p.Name
+			code += fmt.Sprintf("%sif %s != nil {\n", indent, condition)
+			code += fmt.Sprintf("%s\t%s.Pin(unsafe.Pointer(%s))\n", indent, pinnerName, deref)
+		}
+		for level := stars - 1; level >= 1; level-- {
+			code += fmt.Sprintf("%s}\n", strings.Repeat("\t", level))
 		}
 		code += fmt.Sprintf("\tdefer %s.Unpin()\n", pinnerName)
 
@@ -1267,6 +1288,60 @@ func paramConversion(
 		code:          fmt.Sprintf("\t%s, %s := (%s)(%s), cgoAllocsUnknown\n", cVar, allocVar, cgoType, p.Name),
 		cVarName:      cVar,
 		keepAliveName: allocVar,
+	}
+}
+
+// cgoBaseTypeFromCType preserves the C ABI spelling that Go's scalar type
+// mapping loses. In particular, char, signed char, and int8_t all become
+// int8 in the public Go signature but are distinct CGo pointer types.
+func cgoBaseTypeFromCType(cType string, pointerCount int) string {
+	if cType == "" {
+		return ""
+	}
+	cType = strings.TrimSpace(cType)
+	cType = strings.ReplaceAll(cType, "const", "")
+	cType = strings.Join(strings.Fields(cType), " ")
+	for i := 0; i < pointerCount; i++ {
+		if !strings.HasSuffix(cType, "*") {
+			return ""
+		}
+		cType = strings.TrimSpace(strings.TrimSuffix(cType, "*"))
+	}
+	if strings.Contains(cType, "*") || cType == "" {
+		return ""
+	}
+	if strings.HasPrefix(cType, "struct ") {
+		return "C.struct_" + strings.TrimSpace(strings.TrimPrefix(cType, "struct "))
+	}
+	switch cType {
+	case "char":
+		return "C.char"
+	case "signed char":
+		return "C.schar"
+	case "unsigned char":
+		return "C.uchar"
+	case "int8_t", "uint8_t", "int16_t", "uint16_t", "int32_t", "uint32_t", "int64_t", "uint64_t":
+		return "C." + cType
+	case "short":
+		return "C.short"
+	case "unsigned short":
+		return "C.ushort"
+	case "int":
+		return "C.int"
+	case "unsigned int":
+		return "C.uint"
+	case "long":
+		return "C.long"
+	case "unsigned long":
+		return "C.ulong"
+	case "float":
+		return "C.float"
+	case "double":
+		return "C.double"
+	case "_Bool":
+		return "C._Bool"
+	default:
+		return "C." + cType
 	}
 }
 

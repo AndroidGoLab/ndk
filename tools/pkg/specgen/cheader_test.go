@@ -342,6 +342,39 @@ camera_status_t ACameraMetadata_getConstEntry(
 	assert.Equal(t, "out", fd.Params[2].Direction)
 }
 
+func TestParseFunctionsFromSource_ConstPointerArrayIsInput(t *testing.T) {
+	source := `
+void AInput(const char * const *values);
+void AOutput(/*out*/ char **values);
+`
+	funcs := parseFunctionsFromSource(source)
+
+	input := funcs["AInput"].Params[0]
+	assert.Equal(t, "**byte", input.Type)
+	assert.Equal(t, "const char*const*", input.CType)
+	assert.True(t, input.Const)
+	assert.Empty(t, input.Direction)
+
+	output := funcs["AOutput"].Params[0]
+	assert.Equal(t, "**byte", output.Type)
+	assert.Equal(t, "char**", output.CType)
+	assert.Equal(t, "out", output.Direction)
+}
+
+func TestParseFunctionsFromSource_StripsParameterNullability(t *testing.T) {
+	source := `
+void ANullable(const char* _Nonnull value, int* _Nullable out);
+`
+
+	params := parseFunctionsFromSource(source)["ANullable"].Params
+	require.Len(t, params, 2)
+
+	assert.Equal(t, "*byte", params[0].Type)
+	assert.Equal(t, "const char*", params[0].CType)
+	assert.Equal(t, "*int", params[1].Type)
+	assert.Equal(t, "int*", params[1].CType)
+}
+
 func TestCTypeToGoType(t *testing.T) {
 	tests := []struct {
 		input string

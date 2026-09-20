@@ -25,14 +25,22 @@ if [ -z "$NDK_PATH" ] || [ ! -d "$NDK_PATH" ]; then
 fi
 
 API_LEVEL="${API_LEVEL:-35}"
-CC="${NDK_PATH}/toolchains/llvm/prebuilt/linux-x86_64/bin/x86_64-linux-android${API_LEVEL}-clang"
+TOOLCHAIN_DIR="${NDK_PATH}/toolchains/llvm/prebuilt/linux-x86_64"
+NDK_SYSROOT="${TOOLCHAIN_DIR}/sysroot"
+CC="${TOOLCHAIN_DIR}/bin/x86_64-linux-android${API_LEVEL}-clang"
 if [ ! -x "$CC" ]; then
     echo "ERROR: NDK clang not found at $CC"
     exit 1
 fi
 
+export CGO_CFLAGS="${CGO_CFLAGS:+$CGO_CFLAGS }--sysroot=$NDK_SYSROOT"
+export CGO_CPPFLAGS="${CGO_CPPFLAGS:+$CGO_CPPFLAGS }--sysroot=$NDK_SYSROOT"
+export CGO_LDFLAGS="${CGO_LDFLAGS:+$CGO_LDFLAGS }--sysroot=$NDK_SYSROOT"
+
 ADB="${ADB:-adb}"
 TIMEOUT="${TIMEOUT:-15}"
+# adb starts a separate shell, so the host's GODEBUG does not propagate.
+REMOTE_GODEBUG="${GODEBUG:-cgocheck=1}"
 
 # Verify adb connectivity.
 if ! "$ADB" get-state >/dev/null 2>&1; then
@@ -63,7 +71,7 @@ for main_go in $(find examples/ -name main.go -not -path "*/_build/*" | sort); d
     "$ADB" push "$bin" "/data/local/tmp/e2e_$name" >/dev/null 2>&1
     "$ADB" shell "chmod 755 /data/local/tmp/e2e_$name"
 
-    output=$("$ADB" shell "timeout $TIMEOUT /data/local/tmp/e2e_$name 2>&1; echo EXIT=\$?" 2>&1)
+    output=$("$ADB" shell "GODEBUG=$REMOTE_GODEBUG timeout $TIMEOUT /data/local/tmp/e2e_$name 2>&1; echo EXIT=\$?" 2>&1)
     exit_code=$(echo "$output" | grep -oP 'EXIT=\K\d+' | tail -1)
 
     if [ "$exit_code" = "0" ]; then

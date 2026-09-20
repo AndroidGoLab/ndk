@@ -140,28 +140,36 @@ callbacks:
         params:
             - name: frameTimeNanos
               type: int64
+              c_type: long
             - name: data
               type: unsafe.Pointer
+              c_type: void*
         returns: ""
     AChoreographer_frameCallback64:
         params:
             - name: frameTimeNanos
               type: int64
+              c_type: int64_t
             - name: data
               type: unsafe.Pointer
+              c_type: void*
         returns: ""
     AChoreographer_refreshRateCallback:
         params:
             - name: vsyncPeriodNanos
               type: int64
+              c_type: int64_t
             - name: data
               type: unsafe.Pointer
+              c_type: void*
         returns: ""
     AChoreographer_vsyncCallback:
         params:
             - name: callbackData
               type: '*AChoreographerFrameCallbackData'
+              c_type: const AChoreographerFrameCallbackData*
               const: true
             - name: data
               type: unsafe.Pointer
+              c_type: void*
         returns: ""

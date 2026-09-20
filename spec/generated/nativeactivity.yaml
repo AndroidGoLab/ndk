@@ -97,98 +97,123 @@ structs:
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
             - name: onResume
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
             - name: onSaveInstanceState
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: outSize
                   type: '*uint64'
+                  c_type: size_t*
               returns: unsafe.Pointer
             - name: onPause
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
             - name: onStop
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
             - name: onDestroy
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
             - name: onWindowFocusChanged
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: hasFocus
                   type: int32
+                  c_type: int
             - name: onNativeWindowCreated
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: window
                   type: '*ANativeWindow'
+                  c_type: ANativeWindow*
             - name: onNativeWindowResized
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: window
                   type: '*ANativeWindow'
+                  c_type: ANativeWindow*
             - name: onNativeWindowRedrawNeeded
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: window
                   type: '*ANativeWindow'
+                  c_type: ANativeWindow*
             - name: onNativeWindowDestroyed
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: window
                   type: '*ANativeWindow'
+                  c_type: ANativeWindow*
             - name: onInputQueueCreated
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: queue
                   type: '*AInputQueue'
+                  c_type: AInputQueue*
             - name: onInputQueueDestroyed
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: queue
                   type: '*AInputQueue'
+                  c_type: AInputQueue*
             - name: onContentRectChanged
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
                 - name: rect
                   type: '*ARect'
+                  c_type: const ARect*
                   const: true
             - name: onConfigurationChanged
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*
             - name: onLowMemory
               type: func_ptr
               params:
                 - name: activity
                   type: '*ANativeActivity'
+                  c_type: ANativeActivity*

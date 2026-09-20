@@ -1,6 +1,8 @@
 package c2ffi
 
 import (
+	"os"
+	"path/filepath"
 	"testing"
 
 	"github.com/AndroidGoLab/ndk/tools/pkg/specmodel"
@@ -103,6 +105,20 @@ func TestConvertStructInlineUnionFields(t *testing.T) {
 	assert.Equal(t, specmodel.StructField{Name: "f", Type: "*float32"}, data.Fields[2])
 }
 
+func TestConvertStructPreservesNestedCharCType(t *testing.T) {
+	input := `[
+		{"tag":"struct","name":"ACameraIdList","id":1,"location":"camera/NdkCameraDevice.h:60:16","bit-size":128,"bit-alignment":64,"fields":[
+			{"tag":"field","name":"cameraIds","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}
+		]}
+	]`
+
+	spec, err := Convert([]byte(input), ConvertOptions{Module: "camera"})
+	require.NoError(t, err)
+	field := spec.Structs["ACameraIdList"].Fields[0]
+	assert.Equal(t, "**int8", field.Type)
+	assert.Equal(t, "char**", field.CType)
+}
+
 func TestToSignedInt64(t *testing.T) {
 	assert.Equal(t, int64(-1), toSignedInt64(4294967295))
 	assert.Equal(t, int64(-4), toSignedInt64(4294967292))
@@ -126,6 +142,10 @@ func TestTypeRefToGoType(t *testing.T) {
 		{"bool", TypeRef{Tag: ":_Bool"}, "bool"},
 		{"void*", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":void"}}, "unsafe.Pointer"},
 		{"char*", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":char"}}, "string"},
+		{"char**", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":char"}}}, "**int8"},
+		{"char***", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":char"}}}}, "***int8"},
+		{"signed char**", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":signed-char"}}}, "**int8"},
+		{"int8_t**", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: "int8_t"}}}, "**int8"},
 		{"int*", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":int", BitSize: 32}}, "*int32"},
 		{"typedef ref", TypeRef{Tag: "ALooper"}, "ALooper"},
 		{"int32_t", TypeRef{Tag: "int32_t"}, "int32"},
@@ -139,4 +159,104 @@ func TestTypeRefToGoType(t *testing.T) {
 			assert.Equal(t, tt.want, got)
 		})
 	}
+}
+
+func TestTypeRefToCType(t *testing.T) {
+	tests := []struct {
+		name string
+		ref  TypeRef
+		want string
+	}{
+		{"char*", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":char"}}, "char*"},
+		{"char**", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":char"}}}, "char**"},
+		{"signed char**", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":signed-char"}}}, "signed char**"},
+		{"int8_t**", TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: ":pointer", Type: &TypeRef{Tag: "int8_t"}}}, "int8_t**"},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			assert.Equal(t, tt.want, typeRefToCType(&tt.ref))
+		})
+	}
+}
+
+func TestConvertPreservesNestedPointerCType(t *testing.T) {
+	input := `[
+		{"tag":"function","name":"char_out","location":"test.h:1:1","variadic":false,"parameters":[{"tag":"parameter","name":"out","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}],"return-type":{"tag":":void"}},
+		{"tag":"function","name":"signed_out","location":"test.h:2:1","variadic":false,"parameters":[{"tag":"parameter","name":"out","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":signed-char"}}}}],"return-type":{"tag":":void"}},
+		{"tag":"function","name":"int8_out","location":"test.h:3:1","variadic":false,"parameters":[{"tag":"parameter","name":"out","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":"int8_t"}}}}],"return-type":{"tag":":void"}}
+	]`
+
+	spec, err := Convert([]byte(input), ConvertOptions{Module: "test"})
+	require.NoError(t, err)
+	assert.Equal(t, "**int8", spec.Functions["char_out"].Params[0].Type)
+	assert.Equal(t, "char**", spec.Functions["char_out"].Params[0].CType)
+	assert.Equal(t, "signed char**", spec.Functions["signed_out"].Params[0].CType)
+	assert.Equal(t, "int8_t**", spec.Functions["int8_out"].Params[0].CType)
+}
+
+func TestSupplementFunctionParamsUsesExplicitPointerDirections(t *testing.T) {
+	dir := t.TempDir()
+	header := `
+void AInput(const char * const *values);
+void AInputBaseConst(const char **values);
+void AInputTriple(const char ***values);
+void AOutput(/*out*/ char **values);
+bool AMediaFormat_getString(AMediaFormat* format, const char *name, const char **out);
+void AIBinder_dump(void* binder, int fd, const char **args, unsigned int numArgs);
+`
+	require.NoError(t, os.WriteFile(filepath.Join(dir, "test.h"), []byte(header), 0o644))
+
+	input := `[
+		{"tag":"function","name":"AInput","location":"test.h:1:1","variadic":false,"parameters":[{"tag":"parameter","name":"values","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}],"return-type":{"tag":":void"}},
+		{"tag":"function","name":"AInputBaseConst","location":"test.h:2:1","variadic":false,"parameters":[{"tag":"parameter","name":"values","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}],"return-type":{"tag":":void"}},
+		{"tag":"function","name":"AInputTriple","location":"test.h:3:1","variadic":false,"parameters":[{"tag":"parameter","name":"values","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}}],"return-type":{"tag":":void"}},
+		{"tag":"function","name":"AOutput","location":"test.h:4:1","variadic":false,"parameters":[{"tag":"parameter","name":"values","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}],"return-type":{"tag":":void"}},
+		{"tag":"function","name":"AMediaFormat_getString","location":"test.h:5:1","variadic":false,"parameters":[{"tag":"parameter","name":"format","type":{"tag":":pointer","type":{"tag":"AMediaFormat"}}},{"tag":"parameter","name":"name","type":{"tag":":pointer","type":{"tag":":char"}}},{"tag":"parameter","name":"out","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}}],"return-type":{"tag":":_Bool"}},
+		{"tag":"function","name":"AIBinder_dump","location":"test.h:6:1","variadic":false,"parameters":[{"tag":"parameter","name":"binder","type":{"tag":":pointer","type":{"tag":":void"}}},{"tag":"parameter","name":"fd","type":{"tag":":int","bit-size":32}},{"tag":"parameter","name":"args","type":{"tag":":pointer","type":{"tag":":pointer","type":{"tag":":char"}}}},{"tag":"parameter","name":"numArgs","type":{"tag":":unsigned-int","bit-size":32}}],"return-type":{"tag":":void"}}
+	]`
+
+	spec, err := Convert([]byte(input), ConvertOptions{Module: "test", NDKHeaderDirs: []string{dir}})
+	require.NoError(t, err)
+	assert.Equal(t, "", spec.Functions["AInput"].Params[0].Direction)
+	assert.Equal(t, "const char*const*", spec.Functions["AInput"].Params[0].CType)
+	assert.True(t, spec.Functions["AInput"].Params[0].Const)
+	assert.Equal(t, "out", spec.Functions["AInputBaseConst"].Params[0].Direction)
+	assert.Equal(t, "out", spec.Functions["AInputTriple"].Params[0].Direction)
+	assert.Equal(t, "out", spec.Functions["AOutput"].Params[0].Direction)
+	assert.Equal(t, "out", spec.Functions["AMediaFormat_getString"].Params[2].Direction)
+	assert.Equal(t, "", spec.Functions["AIBinder_dump"].Params[2].Direction)
+}
+
+func TestParseCallbacksPreservesCTypeAndConst(t *testing.T) {
+	source := `
+typedef void (*TestCallback)(const char **names, const AThing* thing, signed char* bytes);
+`
+
+	callback := parseCallbacksFromSource(source)["TestCallback"]
+	require.Len(t, callback.Params, 3)
+
+	assert.Equal(t, "const char**", callback.Params[0].CType)
+	assert.True(t, callback.Params[0].Const)
+	assert.Equal(t, "const AThing*", callback.Params[1].CType)
+	assert.True(t, callback.Params[1].Const)
+	assert.Equal(t, "signed char*", callback.Params[2].CType)
+	assert.False(t, callback.Params[2].Const)
+}
+
+func TestParseCallbacksPreservesReturnCTypeAndNullability(t *testing.T) {
+	source := `
+typedef char* _Nullable (*_Nonnull APersistableBundle_stringAllocator)(int32_t sizeBytes,
+                                                                        void* _Nullable context);
+typedef const char* (*Getter)(const void* data);
+`
+
+	callback := parseCallbacksFromSource(source)["APersistableBundle_stringAllocator"]
+	require.Len(t, callback.Params, 2)
+	assert.Equal(t, "*int8", callback.Returns)
+	assert.Equal(t, "char*", callback.ReturnsCType)
+	assert.Equal(t, "int32_t", callback.Params[0].CType)
+	assert.Equal(t, "void*", callback.Params[1].CType)
+	getter := parseCallbacksFromSource(source)["Getter"]
+	assert.Equal(t, "*int8", getter.Returns)
+	assert.Equal(t, "const char*", getter.ReturnsCType)
 }

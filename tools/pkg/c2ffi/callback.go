@@ -73,6 +73,7 @@ func supplementCallbacks(
 				sd.Fields[i].Type = "func_ptr"
 				sd.Fields[i].Params = info.Params
 				sd.Fields[i].Returns = info.Returns
+				sd.Fields[i].ReturnsCType = info.ReturnsCType
 			}
 		}
 		spec.Structs[sname] = sd
@@ -91,6 +92,7 @@ func supplementCallbacks(
 				if info, ok := inlineFields[f.Name]; ok {
 					sd.Fields[i].Params = info.Params
 					sd.Fields[i].Returns = info.Returns
+					sd.Fields[i].ReturnsCType = info.ReturnsCType
 				}
 			}
 			spec.Structs[sname] = sd
@@ -119,11 +121,23 @@ func supplementFunctionParams(
 				if specFunc.Params[idx].Name != headerFunc.Params[idx].Name {
 					continue
 				}
-				if specFunc.Params[idx].Type != headerFunc.Params[idx].Type {
+				if specFunc.Params[idx].Type != headerFunc.Params[idx].Type &&
+					(specFunc.Params[idx].CType == "" ||
+						canonicalCType(specFunc.Params[idx].CType) != canonicalCType(headerFunc.Params[idx].CType)) {
 					continue
+				}
+				if specFunc.Params[idx].CType != "" || needsHeaderCTypeMetadata(headerFunc.Params[idx].CType) {
+					specFunc.Params[idx].CType = headerFunc.Params[idx].CType
 				}
 				if headerFunc.Params[idx].Direction != "" {
 					specFunc.Params[idx].Direction = headerFunc.Params[idx].Direction
+				} else if isExplicitInputParam(name, headerFunc.Params[idx].Name) ||
+					hasConstInnerPointerQualifier(headerFunc.Params[idx].CType) {
+					// A const qualifier between pointer levels makes the
+					// pointed-to array an input. A base const qualifier (for
+					// example const char**) does not: Android APIs such as
+					// AMediaFormat_getString use that form for output.
+					specFunc.Params[idx].Direction = ""
 				}
 				if headerFunc.Params[idx].Const {
 					specFunc.Params[idx].Const = true
@@ -131,6 +145,43 @@ func supplementFunctionParams(
 			}
 			spec.Functions[name] = specFunc
 		}
+	}
+}
+
+// inputParamOverrides records APIs whose const char** parameter is an input
+// array even though the C declarator is otherwise indistinguishable from the
+// output form used by other APIs.
+var inputParamOverrides = map[string]map[string]bool{
+	"AIBinder_dump": {"args": true},
+}
+
+func isExplicitInputParam(functionName, paramName string) bool {
+	return inputParamOverrides[functionName][paramName]
+}
+
+func hasConstInnerPointerQualifier(cType string) bool {
+	canonical := strings.ReplaceAll(cType, " ", "")
+	return strings.Contains(canonical, "*const*")
+}
+
+func canonicalCType(cType string) string {
+	cType = strings.ReplaceAll(cType, "const", "")
+	cType = strings.ReplaceAll(cType, " ", "")
+	return cType
+}
+
+func needsHeaderCTypeMetadata(cType string) bool {
+	canonical := canonicalCType(cType)
+	stars := strings.Count(canonical, "*")
+	if stars < 2 {
+		return false
+	}
+	base := strings.TrimSuffix(canonical, strings.Repeat("*", stars))
+	switch base {
+	case "char", "signedchar", "unsignedchar", "int8_t", "uint8_t":
+		return true
+	default:
+		return false
 	}
 }
 
@@ -207,6 +258,7 @@ func parseInlineFuncPtrFieldsFromDirs(dirs []string) map[string]specmodel.Callba
 
 func parseInlineFuncPtrFieldsFromSource(source string) map[string]specmodel.CallbackDef {
 	result := make(map[string]specmodel.CallbackDef)
+	source = stripNullabilityAnnotations(source)
 
 	for _, m := range funcPtrFieldRe.FindAllStringSubmatch(source, -1) {
 		retType := strings.TrimSpace(m[1])
@@ -219,7 +271,8 @@ func parseInlineFuncPtrFieldsFromSource(source string) map[string]specmodel.Call
 		}
 
 		cb := specmodel.CallbackDef{
-			Returns: cReturnTypeToGo(retType),
+			Returns:      cReturnTypeToGo(retType),
+			ReturnsCType: normalizeCReturnType(retType),
 		}
 
 		cb.Params = append(cb.Params, parseCParamList(paramsStr)...)
@@ -232,6 +285,7 @@ func parseInlineFuncPtrFieldsFromSource(source string) map[string]specmodel.Call
 
 func parseCallbacksFromSource(source string) map[string]specmodel.CallbackDef {
 	result := make(map[string]specmodel.CallbackDef)
+	source = stripNullabilityAnnotations(source)
 
 	for _, m := range funcPtrTypedefRe.FindAllStringSubmatch(source, -1) {
 		retType := strings.TrimSpace(m[1])
@@ -239,7 +293,8 @@ func parseCallbacksFromSource(source string) map[string]specmodel.CallbackDef {
 		paramsStr := m[3]
 
 		cb := specmodel.CallbackDef{
-			Returns: cReturnTypeToGo(retType),
+			Returns:      cReturnTypeToGo(retType),
+			ReturnsCType: normalizeCReturnType(retType),
 		}
 
 		cb.Params = append(cb.Params, parseCParamList(paramsStr)...)
@@ -248,6 +303,17 @@ func parseCallbacksFromSource(source string) map[string]specmodel.CallbackDef {
 	}
 
 	return result
+}
+
+func normalizeCReturnType(cType string) string {
+	cType = stripNullabilityAnnotations(cType)
+	cType = strings.Join(strings.Fields(cType), " ")
+	cType = strings.ReplaceAll(cType, " *", "*")
+	cType = strings.ReplaceAll(cType, "* ", "*")
+	if cType == "void" {
+		return ""
+	}
+	return cType
 }
 
 func cReturnTypeToGo(cType string) string {
@@ -309,11 +375,12 @@ func parseSingleCParam(decl string) specmodel.Param {
 	typeTokens := tokens[:len(tokens)-1]
 
 	// Count pointer stars attached to name.
-	stars := 0
+	nameStars := 0
 	for strings.HasPrefix(name, "*") {
-		stars++
+		nameStars++
 		name = name[1:]
 	}
+	cDeclarator := normalizeCDeclarator(typeTokens, nameStars)
 
 	// If the name is empty or looks like a type, generate a synthetic name.
 	if name == "" {
@@ -324,6 +391,7 @@ func parseSingleCParam(decl string) specmodel.Param {
 	name = sanitizeGoName(name)
 
 	isConst := false
+	stars := nameStars
 	var typeParts []string
 	for _, tok := range typeTokens {
 		if tok == "const" || tok == "struct" {
@@ -349,7 +417,7 @@ func parseSingleCParam(decl string) specmodel.Param {
 
 	// Special case: const char* → string.
 	if typeName == "char" && stars == 1 && isConst {
-		return specmodel.Param{Name: name, Type: "string", Const: true}
+		return specmodel.Param{Name: name, Type: "string", CType: cDeclarator, Const: true}
 	}
 
 	goType := cBaseToGo(typeName)
@@ -364,8 +432,19 @@ func parseSingleCParam(decl string) specmodel.Param {
 	return specmodel.Param{
 		Name:  name,
 		Type:  goType,
+		CType: cDeclarator,
 		Const: isConst,
 	}
+}
+
+func normalizeCDeclarator(typeTokens []string, nameStars int) string {
+	declarator := strings.TrimSpace(strings.Join(typeTokens, " "))
+	declarator = strings.ReplaceAll(declarator, " *", "*")
+	declarator = strings.ReplaceAll(declarator, "* ", "*")
+	if declarator == "" {
+		declarator = "void"
+	}
+	return declarator + strings.Repeat("*", nameStars)
 }
 
 // stripNullabilityAnnotations removes Clang nullability attributes from a C declaration.

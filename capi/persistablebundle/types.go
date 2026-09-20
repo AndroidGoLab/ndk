@@ -9,6 +9,7 @@ package persistablebundle
 #include "cgo_helpers.h"
 */
 import "C"
+import "unsafe"
 
 type APersistableBundle C.APersistableBundle
 
@@ -16,4 +17,4 @@ type AParcel C.AParcel
 
 type Binder_status_t C.binder_status_t
 
-type APersistableBundle_stringAllocator func()
+type APersistableBundle_stringAllocator func(sizeBytes int32, context unsafe.Pointer) *int8

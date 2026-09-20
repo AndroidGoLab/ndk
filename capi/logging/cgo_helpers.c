@@ -2,11 +2,11 @@
 
 #include "_cgo_export.h"
 
-void __android_aborter_function_6780bbf7(char* abort_message) {
-	Android_aborter_function6780BBF7(abort_message);
+void __android_aborter_function_6780bbf7(const char* abort_message) {
+	Android_aborter_function6780BBF7((char*)abort_message);
 }
 
-void __android_logger_function_cb93890b(struct __android_log_message* log_message) {
-	Android_logger_functionCB93890B(log_message);
+void __android_logger_function_cb93890b(const struct __android_log_message* log_message) {
+	Android_logger_functionCB93890B((struct __android_log_message*)log_message);
 }
 

@@ -10,6 +10,8 @@ import (
 // type expression used in function wrapper conversions.
 func goTypeToCGoType(goType string) string {
 	switch goType {
+	case "byte":
+		return "C.char"
 	case "int8":
 		return "C.int8_t"
 	case "uint8":
@@ -58,6 +60,8 @@ func goTypeToCGoExactType(goType string) string {
 // (for cgo_helpers.h declarations).
 func goTypeToCHeaderType(goType string) string {
 	switch goType {
+	case "byte":
+		return "char"
 	case "int8":
 		return "int8_t"
 	case "uint8":
@@ -129,6 +133,61 @@ func goTypeToCGoCallbackParam(goType string) string {
 	return goTypeToCGoType(goType)
 }
 
+// goTypeToCGoCallbackParamWithCType converts a callback parameter using its
+// original C declarator when the Go type has lost ABI identity.
+func goTypeToCGoCallbackParamWithCType(goType, cType string, structPrefixSet map[string]bool) string {
+	if cType == "" {
+		return applyCGoStructPrefix(goTypeToCGoCallbackParam(goType), structPrefixSet)
+	}
+
+	pointerDepth := strings.Count(cType, "*")
+	if pointerDepth == 0 {
+		if exactBase := cgoBaseTypeFromCType(cType, 0); exactBase != "" && exactBase != "C.void" {
+			return applyCGoStructPrefix(exactBase, structPrefixSet)
+		}
+		return applyCGoStructPrefix(goTypeToCGoCallbackParam(goType), structPrefixSet)
+	}
+
+	base := cgoBaseTypeFromCType(cType, pointerDepth)
+	if base == "" || base == "C.void" {
+		return applyCGoStructPrefix(goTypeToCGoCallbackParam(goType), structPrefixSet)
+	}
+
+	return applyCGoStructPrefix(strings.Repeat("*", pointerDepth)+base, structPrefixSet)
+}
+
+func goTypeToCGoCallbackReturnWithCType(goType, cType string, structPrefixSet map[string]bool) string {
+	return goTypeToCGoCallbackParamWithCType(goType, cType, structPrefixSet)
+}
+
+// goTypeToCHeaderCallbackParam returns the exact C declaration for a callback
+// proxy parameter when header metadata is available.
+func goTypeToCHeaderCallbackParam(goType, cType string, structPrefixSet map[string]bool) string {
+	if cType != "" {
+		return cType
+	}
+	return goTypeToCHeaderTypeWithStructPrefix(goType, structPrefixSet)
+}
+
+func goTypeToCHeaderCallbackReturn(goType, cType string, structPrefixSet map[string]bool) string {
+	if cType != "" {
+		return cType
+	}
+	return goTypeToCHeaderTypeWithStructPrefix(goType, structPrefixSet)
+}
+
+// cTypeWithoutQualifiers removes qualifiers that CGo cannot express in an
+// exported Go callback declaration.
+func cTypeWithoutQualifiers(cType string) string {
+	for _, qualifier := range []string{"const", "volatile", "restrict"} {
+		cType = strings.ReplaceAll(cType, qualifier, "")
+	}
+	for strings.Contains(cType, "  ") {
+		cType = strings.ReplaceAll(cType, "  ", " ")
+	}
+	return strings.TrimSpace(cType)
+}
+
 // cgoCallbackParamToGo generates code to convert a CGo callback parameter
 // to its Go equivalent. Uses exported Go type names.
 func cgoCallbackParamToGo(cVarName string, goVarName string, goType string) string {
@@ -152,10 +211,18 @@ func goToCGoReturn(goRetVar string, goRetType string) string {
 	return fmt.Sprintf("(%s)(%s)", cgoType, goRetVar)
 }
 
+func goToCGoReturnWithCType(goRetVar, goRetType, cType string, structPrefixSet map[string]bool) string {
+	cgoType := goTypeToCGoCallbackReturnWithCType(goRetType, cType, structPrefixSet)
+	if strings.HasPrefix(cgoType, "*") {
+		return fmt.Sprintf("(%s)(unsafe.Pointer(%s))", cgoType, goRetVar)
+	}
+	return fmt.Sprintf("(%s)(%s)", cgoType, goRetVar)
+}
+
 // isScalarGoType returns true for Go scalar types (not pointers, slices, etc.).
 func isScalarGoType(t string) bool {
 	switch t {
-	case "int8", "uint8", "int16", "uint16", "int32", "uint32",
+	case "byte", "int8", "uint8", "int16", "uint16", "int32", "uint32",
 		"int64", "uint64", "float32", "float64", "bool", "int", "uint":
 		return true
 	}
